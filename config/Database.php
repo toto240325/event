@@ -1,9 +1,5 @@
 <?php 
 
-echo "test";
-
-
-
   class Database {
     // DB Params
     private $host = 'localhost';
@@ -30,4 +26,3 @@ echo "test";
   $database = new Database();
   $db = $database->connect();
 
-  echo "end";
