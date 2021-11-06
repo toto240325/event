@@ -2,8 +2,6 @@
 
 echo "test";
 
-
-
   class Database {
     // DB Params
     private $host = 'localhost';
