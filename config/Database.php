@@ -1,10 +1,5 @@
 <?php 
 
-<<<<<<< HEAD
-=======
-echo "test";
-
->>>>>>> 6480ebd9879a3d6715b89c04877931a71252bf33
   class Database {
     // DB Params
     private $host = 'localhost';
@@ -27,7 +22,3 @@ echo "test";
       return $this->conn;
     }
   }
-
-  $database = new Database();
-  $db = $database->connect();
-
