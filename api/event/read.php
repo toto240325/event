@@ -32,6 +32,7 @@
         'text' => $text,
         'host' => $body,
         'type' => $type,
+        'time' => $time,
       );
 
       // Push to "data"
