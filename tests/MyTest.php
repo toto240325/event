@@ -97,14 +97,14 @@ function myCreateEvent($text,$host,$type) {
     var_dump($data);
 
 
-    $data2 = <<<DATA
-        {
-        "text": "test php post",
-        "host": "post host",
-        "type": "post type"
-        }
-    DATA;
-var_dump($data2);
+//     $data2 = <<<DATA
+//         {
+//         "text": "test php post",
+//         "host": "post host",
+//         "type": "post type"
+//         }
+//     DATA;
+// var_dump($data2);
     
     curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
 
