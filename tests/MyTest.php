@@ -70,7 +70,7 @@ function myCurl($url) {
     return $output;
 }
 
-function myCreateEvent() {
+function myCreateEvent($text,$host,$type) {
 
     $url = "http://192.168.0.52/event_dev/api/event/create.php";
 
@@ -85,14 +85,27 @@ function myCreateEvent() {
     );
     curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
 
-    $data = <<<DATA
-    {
-    "text": "test php post",
-    "host": "post host",
-    "type": "post type"
-    }
-    DATA;
 
+
+
+    $data = '{
+        "text": "' . $text . '",
+        "host": "' . $host . '",
+        "type": "' . $type . '"
+    }';    
+
+    var_dump($data);
+
+
+    $data2 = <<<DATA
+        {
+        "text": "test php post",
+        "host": "post host",
+        "type": "post type"
+        }
+    DATA;
+var_dump($data2);
+    
     curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
 
     // //for debug only!
@@ -101,8 +114,8 @@ function myCreateEvent() {
 
     $resp = curl_exec($curl);
     curl_close($curl);
-    var_dump($resp);
-
+    //var_dump($resp);
+    return $resp;
 }
 
 function parseEventOutput($output) {
@@ -140,7 +153,8 @@ class MyTest extends \PHPUnit\Framework\TestCase {
     }
 
     public function testCreate() {
-        myCreateEvent();
+
+        $resp = myCreateEvent("my text","my host", "my type");
         // $output = myCurl("http://192.168.0.52/event_dev/api/event/create.php");
         // $parsedOutput = parseEventOutput($output);
         // $type = gettype($parsedOutput);
