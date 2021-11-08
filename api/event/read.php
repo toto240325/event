@@ -7,7 +7,7 @@
   include_once '../../models/Event.php';
 
   // Instantiate DB & connect
-  $database = new Database();
+  $database = new Database_mysql();
   $db = $database->connect();
 
   // Instantiate blog event object
@@ -30,7 +30,7 @@
       $event_item = array(
         'id' => $id,
         'text' => $text,
-        'host' => $body,
+        'host' => $host,
         'type' => $type,
         'time' => $time,
       );

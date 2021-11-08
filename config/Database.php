@@ -29,18 +29,15 @@ class Database_mysql {
 }
 
 # sqlite database
-class Database  {
+class Database_sqlite {
   // DB Params
   private $conn;
   
   // DB Connect
   public function connect() {
-    global $db_type;
-    $db_type = "sqlite3";
     $this->conn = null;
-
     try { 
-      $this->conn = new PDO('sqlite:mydatabase_dev.db');
+      $this->conn = new PDO('sqlite:/home/toto/event_dev/mydatabase_dev.db');
       $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     } catch(PDOException $e) {
       echo 'Connection Error: ' . $e->getMessage();
@@ -50,21 +47,23 @@ class Database  {
   }
 }
 
-function testdb() {
-  global $db_type;
+function show_tables() {
   include_once '/home/toto/event_dev/models/Event.php';
 
   // Instantiate DB & connect
-  $db = new Database();
-  if ($db_type == "mysql") $db = $database->connect();
-  $tablesquery = $db->query("SELECT name FROM sqlite_master WHERE type='table';");
+  $database = new Database_sqlite();
+  $db = $database->connect();
 
-  while ($table = $tablesquery->fetchArray(SQLITE3_ASSOC)) {
-      echo $table['name'] . '<br />';
+  $result = $db->query("SELECT name FROM sqlite_master WHERE type='table';");
+
+  echo "Tables in this db:\n";
+  // Loop thru all data from messages table 
+  // and insert it to file db
+  foreach ($result as $r) {
+    echo $r['name']."\n";  
   }
 }
-testdb();
 
-echo "\nend\n";
+//show_tables();
 
   ?>

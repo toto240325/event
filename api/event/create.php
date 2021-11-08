@@ -9,7 +9,7 @@
   include_once '../../models/Event.php';
 
   // Instantiate DB & connect
-  $database = new Database();
+  $database = new Database_mysql();
   $db = $database->connect();
 
   // Instantiate blog event object
