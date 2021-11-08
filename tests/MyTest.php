@@ -94,7 +94,7 @@ function myCreateEvent($text,$host,$type) {
         "type": "' . $type . '"
     }';    
 
-    var_dump($data);
+//    var_dump($data);
 
 
 //     $data2 = <<<DATA
