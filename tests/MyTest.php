@@ -20,6 +20,27 @@ function myCurl($url) {
     return $output;
 }
 
+function post($url,$fields_string) {
+    
+    //open connection
+    $ch = curl_init();
+
+    //set the url, number of POST vars, POST data
+    curl_setopt($ch,CURLOPT_URL, $url);
+    curl_setopt($ch,CURLOPT_POST, true);
+    curl_setopt($ch,CURLOPT_POSTFIELDS, $fields_string);
+
+    //So that curl_exec returns the contents of the cURL; rather than echoing it
+    curl_setopt($ch,CURLOPT_RETURNTRANSFER, true); 
+
+    //execute post
+    $result = curl_exec($ch);
+    echo $result;
+}
+
+
+
+
 function parseEventOutput($output) {
 
     // $output should be something like this :  
@@ -126,15 +147,37 @@ class MyTest extends \PHPUnit\Framework\TestCase {
     // }
 
     public function testEventMock() {
-        $output = myCurl("http://192.168.0.52/event_dev_sqlite/api/event/mock.php");
-        $parsedOutput = parseEventOutput($output);
+        $output = myCurl("http://192.168.0.52/event_dev/api/event/mock.php");
+        $result = json_decode($output, true);
+        $message = $result["message"]; 
+        $this->assertStringContainsString("this is the mockup function",$message);
+    }
     
-        $this->assertSame("mockup host",$parsedOutput["host"]);
-        $this->assertSame("mockup",$parsedOutput["type"]);
-        $this->assertSame("this is the mockup event",$parsedOutput["text"]);
-        $this->assertSame("",$parsedOutput["errMsg"]);
-        // '{"records":[{"id":"135","time":"2021-09-15 00:55:19","host":"myHost","text":"my text","type":"mytype"}],"errMsg":""}', 
-            // trim($this->_execute($args))
+    public function testEventCreate() {
+        $url = "http://192.168.0.52/event_dev/api/event/create.php";
+
+        // //The data you want to send via POST (seperated http query fields like : text=text1&host=hostABC&type=this+is+mytype)
+        // $fields = [
+        //     'text' => 'text sent via POST',
+        //     'host' => 'my host',
+        //     'type' => 'posted'
+        // ];
+    
+        // //url-ify the data for the POST
+        // $fields_string = http_build_query($fields);
+    
+        //The data you want to send via POST (as a json string)
+        $fields_string = '{
+            "text" : "test from postman",
+            "host" : "test host",
+            "type" : "sqlite test"
+        }';  
+    
+        post("url","data");
+        // $output = myCurl("http://192.168.0.52/event_dev/api/event/create.php");
+        // $result = json_decode($output, true);
+        // $message = $result["message"]; 
+        // $this->assertStringContainsString("this is the mockup function",$message);
     }
     
 
