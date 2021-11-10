@@ -11,6 +11,56 @@
 //     return ob_get_clean();
 // }
 
+
+// function parseEventOutput($output) {
+
+//     // $output should be something like this :  
+//     //{"records":"{\"id\":\"63\",\"time\":\"2017-11-22 22:07:56\",\"host\":\"mockup host\",\"text\":\"this is the mockup event\",\"type\":\"mockup\"}","errMsg":""}
+
+//     $json = json_decode($output, true);
+
+//     // $json should be something like this :
+//     // array(2) {
+//     //   ["records"]=>
+//     //   string(111) "{"id":"63","time":"2017-11-22 22:07:56","host":"mockup host","text":"this is the mockup event","type":"mockup"}"
+//     //   ["errMsg"]=>
+//     //   string(0) ""
+//     // }
+
+//     // var_dump($json);
+//     $records = $json["records"];
+//     $errMsg = $json["errMsg"];
+//     if ($records != []) {
+//         var_dump($records);
+//         $json2 = json_decode($records,true);
+//         $id = $json2["id"];
+//         $time = $json2["time"];
+//         $host = $json2["host"];
+//         $text = $json2["text"];
+//         $type = $json2["type"];
+        
+//         // echo "host : ".$host."\n";
+//         // echo "id : ".$id."\n";
+//         // echo "time : ".$time."\n";
+//         // echo "text : ".$text."\n";
+//         // echo "type : ".$type."\n";    
+//     } else {
+//         $id = null;
+//         $time = null;
+//         $host = null;
+//         $text = null;
+//         $type = null;
+//     }
+//     return [
+//         "id" => $id,
+//         "time" => $time,
+//         "host" => $host,
+//         "text" => $text,
+//         "type" => $type,
+//         "errMsg" => $errMsg
+//     ];   
+// }
+
 function myCurl($url) {
     $curl = curl_init();
     curl_setopt($curl, CURLOPT_URL, $url);
@@ -20,8 +70,7 @@ function myCurl($url) {
     return $output;
 }
 
-function post($url,$fields_string) {
-    
+function post2($url,$fields_string) {
     //open connection
     $ch = curl_init();
 
@@ -34,63 +83,27 @@ function post($url,$fields_string) {
     curl_setopt($ch,CURLOPT_RETURNTRANSFER, true); 
 
     //execute post
-    $result = curl_exec($ch);
-    echo $result;
+    return $result = curl_exec($ch);
 }
 
 
-
-
-function parseEventOutput($output) {
-
-    // $output should be something like this :  
-    //{"records":"{\"id\":\"63\",\"time\":\"2017-11-22 22:07:56\",\"host\":\"mockup host\",\"text\":\"this is the mockup event\",\"type\":\"mockup\"}","errMsg":""}
-
-    $json = json_decode($output, true);
-
-    // $json should be something like this :
-    // array(2) {
-    //   ["records"]=>
-    //   string(111) "{"id":"63","time":"2017-11-22 22:07:56","host":"mockup host","text":"this is the mockup event","type":"mockup"}"
-    //   ["errMsg"]=>
-    //   string(0) ""
-    // }
-
-    // var_dump($json);
-    $records = $json["records"];
-    $errMsg = $json["errMsg"];
-    if ($records != []) {
-        var_dump($records);
-        $json2 = json_decode($records,true);
-        $id = $json2["id"];
-        $time = $json2["time"];
-        $host = $json2["host"];
-        $text = $json2["text"];
-        $type = $json2["type"];
-        
-        // echo "host : ".$host."\n";
-        // echo "id : ".$id."\n";
-        // echo "time : ".$time."\n";
-        // echo "text : ".$text."\n";
-        // echo "type : ".$type."\n";    
-    } else {
-        $id = null;
-        $time = null;
-        $host = null;
-        $text = null;
-        $type = null;
-    }
-
-
-    return [
-        "id" => $id,
-        "time" => $time,
-        "host" => $host,
-        "text" => $text,
-        "type" => $type,
-        "errMsg" => $errMsg
-    ];   
+function post($url,$fields_string) {
+    $sURL = $url;
+    $sPD = $fields_string;
+    $aHTTP = array(
+    'http' => // The wrapper to be used
+        array(
+        'method'  => 'POST', // Request Method
+        // Request Headers Below
+        'header'  => 'Content-type: application/x-www-form-urlencoded',
+        'content' => $sPD
+    )
+    );
+    $context = stream_context_create($aHTTP);
+    $contents = file_get_contents($sURL, false, $context);
+    return $contents;
 }
+
 
 class MyTest extends \PHPUnit\Framework\TestCase {
 
@@ -173,15 +186,13 @@ class MyTest extends \PHPUnit\Framework\TestCase {
             "type" : "sqlite test"
         }';  
     
-        post("url","data");
-        // $output = myCurl("http://192.168.0.52/event_dev/api/event/create.php");
-        // $result = json_decode($output, true);
-        // $message = $result["message"]; 
-        // $this->assertStringContainsString("this is the mockup function",$message);
+        $json = post($url,$fields_string);
+        $result = json_decode($json,true);
+        // echo "result : \n";
+        // var_dump($result);
+
+        $message = $result["message"]; 
+        $this->assertStringContainsString("event created on ",$message);
     }
-    
-
-
-
 
 }
