@@ -87,8 +87,46 @@ class MyTest extends \PHPUnit\Framework\TestCase {
         $this->assertNotEquals($a,$c);
     }
 
-    public function testCurlMock() {
-        $output = myCurl("http://192.168.0.45/monitor/getEvent.php?eventFct=mockup");
+    // public function testCurlMock() {
+    //     $output = myCurl("http://192.168.0.45/monitor/getEvent.php?eventFct=mockup");
+    //     $parsedOutput = parseEventOutput($output);
+    
+    //     $this->assertSame("mockup host",$parsedOutput["host"]);
+    //     $this->assertSame("mockup",$parsedOutput["type"]);
+    //     $this->assertSame("this is the mockup event",$parsedOutput["text"]);
+    //     $this->assertSame("",$parsedOutput["errMsg"]);
+    //     // '{"records":[{"id":"135","time":"2021-09-15 00:55:19","host":"myHost","text":"my text","type":"mytype"}],"errMsg":""}', 
+    //         // trim($this->_execute($args))
+    // }
+
+    // public function testCurlAddEvent() {
+    //     $output = myCurl("http://localhost/monitor/getEvent.php?eventFct=add&&host=myHost&text=my+text&type=my+type");
+    //     // output should be : 
+    //     // {"records":[],"errMsg":"Record inserted correctly"}
+    //     $parsedOutput = parseEventOutput($output);
+    
+    //     // $this->assertSame("mockup host",$parsedOutput["host"]);
+    //     // $this->assertSame("mockup",$parsedOutput["type"]);
+    //     // $this->assertSame("this is the mockup event",$parsedOutput["text"]);
+    //     $this->assertSame("Record inserted correctly",$parsedOutput["errMsg"]);
+    // }
+
+    // public function testCurlLastEvent() {
+    //     $output = myCurl("http://192.168.0.45/monitor/getEvent.php?eventFct=getLastEventByType&type=my+type");
+    //     //output (following previous test having added some record) should be something like : 
+    //     // {"records":[{"id":"13","time":"2021-11-01 01:52:11","host":"myHost","text":"my text","type":"my type"}],"errMsg":""}
+    //     $parsedOutput = parseEventOutput($output);
+    
+    //     $this->assertSame("myhost",$parsedOutput["host"]);
+    //     $this->assertSame("mockup",$parsedOutput["type"]);
+    //     $this->assertSame("this is the mockup event",$parsedOutput["text"]);
+    //     $this->assertSame("",$parsedOutput["errMsg"]);
+    //     // '{"records":[{"id":"135","time":"2021-09-15 00:55:19","host":"myHost","text":"my text","type":"mytype"}],"errMsg":""}', 
+    //         // trim($this->_execute($args))
+    // }
+
+    public function testEventMock() {
+        $output = myCurl("http://192.168.0.52/event_dev_sqlite/api/event/mock.php");
         $parsedOutput = parseEventOutput($output);
     
         $this->assertSame("mockup host",$parsedOutput["host"]);
@@ -98,31 +136,9 @@ class MyTest extends \PHPUnit\Framework\TestCase {
         // '{"records":[{"id":"135","time":"2021-09-15 00:55:19","host":"myHost","text":"my text","type":"mytype"}],"errMsg":""}', 
             // trim($this->_execute($args))
     }
-
-    public function testCurlAddEvent() {
-        $output = myCurl("http://localhost/monitor/getEvent.php?eventFct=add&&host=myHost&text=my+text&type=my+type");
-        // output should be : 
-        // {"records":[],"errMsg":"Record inserted correctly"}
-        $parsedOutput = parseEventOutput($output);
     
-        // $this->assertSame("mockup host",$parsedOutput["host"]);
-        // $this->assertSame("mockup",$parsedOutput["type"]);
-        // $this->assertSame("this is the mockup event",$parsedOutput["text"]);
-        $this->assertSame("Record inserted correctly",$parsedOutput["errMsg"]);
-    }
 
-    public function testCurlLastEvent() {
-        $output = myCurl("http://192.168.0.45/monitor/getEvent.php?eventFct=getLastEventByType&type=my+type");
-        //output (following previous test having added some record) should be something like : 
-        // {"records":[{"id":"13","time":"2021-11-01 01:52:11","host":"myHost","text":"my text","type":"my type"}],"errMsg":""}
-        $parsedOutput = parseEventOutput($output);
-    
-        $this->assertSame("myhost",$parsedOutput["host"]);
-        $this->assertSame("mockup",$parsedOutput["type"]);
-        $this->assertSame("this is the mockup event",$parsedOutput["text"]);
-        $this->assertSame("",$parsedOutput["errMsg"]);
-        // '{"records":[{"id":"135","time":"2021-09-15 00:55:19","host":"myHost","text":"my text","type":"mytype"}],"errMsg":""}', 
-            // trim($this->_execute($args))
-    }
+
+
 
 }
