@@ -11,7 +11,16 @@
 //     return ob_get_clean();
 // }
 
-function parseEventOutput2($output) {
+function myCurl($url) {
+    $curl = curl_init();
+    curl_setopt($curl, CURLOPT_URL, $url);
+    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
+    $output = curl_exec($curl);
+    curl_close($curl);
+    return $output;
+}
+
+function parseEventOutput($output) {
 
     // $output should be something like this :  
     //{"records":"{\"id\":\"63\",\"time\":\"2017-11-22 22:07:56\",\"host\":\"mockup host\",\"text\":\"this is the mockup event\",\"type\":\"mockup\"}","errMsg":""}
@@ -51,6 +60,7 @@ function parseEventOutput2($output) {
         $type = null;
     }
 
+
     return [
         "id" => $id,
         "time" => $time,
@@ -59,71 +69,6 @@ function parseEventOutput2($output) {
         "type" => $type,
         "errMsg" => $errMsg
     ];   
-}
-
-function myCurl($url) {
-    $curl = curl_init();
-    curl_setopt($curl, CURLOPT_URL, $url);
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, 1);
-    $output = curl_exec($curl);
-    curl_close($curl);
-    return $output;
-}
-
-function myCreateEvent($text,$host,$type) {
-
-    $url = "http://192.168.0.52/event_dev/api/event/create.php";
-
-    $curl = curl_init($url);
-    curl_setopt($curl, CURLOPT_URL, $url);
-    curl_setopt($curl, CURLOPT_POST, true);
-    curl_setopt($curl, CURLOPT_RETURNTRANSFER, true);
-
-    $headers = array(
-        "Accept: application/json",
-        "Content-Type: application/json",
-    );
-    curl_setopt($curl, CURLOPT_HTTPHEADER, $headers);
-
-
-
-
-    $data = '{
-        "text": "' . $text . '",
-        "host": "' . $host . '",
-        "type": "' . $type . '"
-    }';    
-
-//    var_dump($data);
-
-
-//     $data2 = <<<DATA
-//         {
-//         "text": "test php post",
-//         "host": "post host",
-//         "type": "post type"
-//         }
-//     DATA;
-// var_dump($data2);
-    
-    curl_setopt($curl, CURLOPT_POSTFIELDS, $data);
-
-    // //for debug only!
-    // curl_setopt($curl, CURLOPT_SSL_VERIFYHOST, false);
-    // curl_setopt($curl, CURLOPT_SSL_VERIFYPEER, false);
-
-    $resp = curl_exec($curl);
-    curl_close($curl);
-    //var_dump($resp);
-    return $resp;
-}
-
-function parseEventOutput($output) {
-
-    // $output should be something like this :  
-    // [{"id":"1","text":"event1","host":null,"type":"mytype1"},{"id":"2","text":"event2","host":null,"type":"mytype2"}]
-
-    return json_decode($output, true);
 }
 
 class MyTest extends \PHPUnit\Framework\TestCase {
@@ -142,25 +87,42 @@ class MyTest extends \PHPUnit\Framework\TestCase {
         $this->assertNotEquals($a,$c);
     }
 
-
-    public function testRead() {
-        $output = myCurl("http://192.168.0.52/event_dev/api/event/read.php");
+    public function testCurlMock() {
+        $output = myCurl("http://192.168.0.45/monitor/getEvent.php?eventFct=mockup");
         $parsedOutput = parseEventOutput($output);
-        $type = gettype($parsedOutput);
-        $this->assertSame("array",$type);
-        $nb_recs = count($parsedOutput);
-        $this->assertGreaterThan(1,$nb_recs);       
+    
+        $this->assertSame("mockup host",$parsedOutput["host"]);
+        $this->assertSame("mockup",$parsedOutput["type"]);
+        $this->assertSame("this is the mockup event",$parsedOutput["text"]);
+        $this->assertSame("",$parsedOutput["errMsg"]);
+        // '{"records":[{"id":"135","time":"2021-09-15 00:55:19","host":"myHost","text":"my text","type":"mytype"}],"errMsg":""}', 
+            // trim($this->_execute($args))
     }
 
-    public function testCreate() {
+    public function testCurlAddEvent() {
+        $output = myCurl("http://localhost/monitor/getEvent.php?eventFct=add&&host=myHost&text=my+text&type=my+type");
+        // output should be : 
+        // {"records":[],"errMsg":"Record inserted correctly"}
+        $parsedOutput = parseEventOutput($output);
+    
+        // $this->assertSame("mockup host",$parsedOutput["host"]);
+        // $this->assertSame("mockup",$parsedOutput["type"]);
+        // $this->assertSame("this is the mockup event",$parsedOutput["text"]);
+        $this->assertSame("Record inserted correctly",$parsedOutput["errMsg"]);
+    }
 
-        $resp = myCreateEvent("my text","my host", "my type");
-        // $output = myCurl("http://192.168.0.52/event_dev/api/event/create.php");
-        // $parsedOutput = parseEventOutput($output);
-        // $type = gettype($parsedOutput);
-        // $this->assertSame("array",$type);
-        // $nb_recs = count($parsedOutput);
-        $this->assertSame(1,1);       
+    public function testCurlLastEvent() {
+        $output = myCurl("http://192.168.0.45/monitor/getEvent.php?eventFct=getLastEventByType&type=my+type");
+        //output (following previous test having added some record) should be something like : 
+        // {"records":[{"id":"13","time":"2021-11-01 01:52:11","host":"myHost","text":"my text","type":"my type"}],"errMsg":""}
+        $parsedOutput = parseEventOutput($output);
+    
+        $this->assertSame("myhost",$parsedOutput["host"]);
+        $this->assertSame("mockup",$parsedOutput["type"]);
+        $this->assertSame("this is the mockup event",$parsedOutput["text"]);
+        $this->assertSame("",$parsedOutput["errMsg"]);
+        // '{"records":[{"id":"135","time":"2021-09-15 00:55:19","host":"myHost","text":"my text","type":"mytype"}],"errMsg":""}', 
+            // trim($this->_execute($args))
     }
 
 }

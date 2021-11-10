@@ -5,8 +5,8 @@ $db_type = "";
 #mysql database
 class Database_mysql {
   // DB Params
-  private $host = 'localhost';
-  private $db_name = 'mydatabase';
+  public $host = 'localhost';
+  public $db_name = 'mydatabase';
   private $username = 'toto';
   private $password = 'Toto!';
   private $conn;
