@@ -17,7 +17,10 @@
   $event = new event($db);
 
   // Get raw evented data
-  $data = json_decode(file_get_contents("php://input"));
+  $input = file_get_contents("php://input");
+  //echo "input : " . $input . "\n";
+  $data = json_decode($input);
+  
 
   // $data = json_decode('{
   //   "text" : "backup of HP455G7",

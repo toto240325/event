@@ -5,9 +5,11 @@
 
   include_once '../../config/Database.php';
   include_once '../../models/Event.php';
+  include '../../params.php';
 
   // Instantiate DB & connect
-  $database = new Database();
+  $database = new Database($params);
+
   $db = $database->connect();
 
   // Instantiate blog event$event object
@@ -25,6 +27,7 @@
     'text' => $event->text,
     'host' => $event->host,
     'type' => $event->type,
+    'time' => $event->time,
   );
 
   // Make JSON

@@ -4,7 +4,6 @@
     private $conn;
     private $table = 'events';
 
-
     // CREATE TABLE `events` (
     //   `id` int(11) NOT NULL AUTO_INCREMENT,
     //   `text` varchar(255) NOT NULL,
@@ -13,7 +12,6 @@
     //   `time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     //   PRIMARY KEY (`id`)
     // );
-
 
     // event Properties
     public $id;

@@ -86,7 +86,6 @@ function post2($url,$fields_string) {
     return $result = curl_exec($ch);
 }
 
-
 function post($url,$fields_string) {
     $sURL = $url;
     $sPD = $fields_string;
@@ -120,44 +119,6 @@ class MyTest extends \PHPUnit\Framework\TestCase {
         $this->assertNotEquals($a,$c);
     }
 
-    // public function testCurlMock() {
-    //     $output = myCurl("http://192.168.0.45/monitor/getEvent.php?eventFct=mockup");
-    //     $parsedOutput = parseEventOutput($output);
-    
-    //     $this->assertSame("mockup host",$parsedOutput["host"]);
-    //     $this->assertSame("mockup",$parsedOutput["type"]);
-    //     $this->assertSame("this is the mockup event",$parsedOutput["text"]);
-    //     $this->assertSame("",$parsedOutput["errMsg"]);
-    //     // '{"records":[{"id":"135","time":"2021-09-15 00:55:19","host":"myHost","text":"my text","type":"mytype"}],"errMsg":""}', 
-    //         // trim($this->_execute($args))
-    // }
-
-    // public function testCurlAddEvent() {
-    //     $output = myCurl("http://localhost/monitor/getEvent.php?eventFct=add&&host=myHost&text=my+text&type=my+type");
-    //     // output should be : 
-    //     // {"records":[],"errMsg":"Record inserted correctly"}
-    //     $parsedOutput = parseEventOutput($output);
-    
-    //     // $this->assertSame("mockup host",$parsedOutput["host"]);
-    //     // $this->assertSame("mockup",$parsedOutput["type"]);
-    //     // $this->assertSame("this is the mockup event",$parsedOutput["text"]);
-    //     $this->assertSame("Record inserted correctly",$parsedOutput["errMsg"]);
-    // }
-
-    // public function testCurlLastEvent() {
-    //     $output = myCurl("http://192.168.0.45/monitor/getEvent.php?eventFct=getLastEventByType&type=my+type");
-    //     //output (following previous test having added some record) should be something like : 
-    //     // {"records":[{"id":"13","time":"2021-11-01 01:52:11","host":"myHost","text":"my text","type":"my type"}],"errMsg":""}
-    //     $parsedOutput = parseEventOutput($output);
-    
-    //     $this->assertSame("myhost",$parsedOutput["host"]);
-    //     $this->assertSame("mockup",$parsedOutput["type"]);
-    //     $this->assertSame("this is the mockup event",$parsedOutput["text"]);
-    //     $this->assertSame("",$parsedOutput["errMsg"]);
-    //     // '{"records":[{"id":"135","time":"2021-09-15 00:55:19","host":"myHost","text":"my text","type":"mytype"}],"errMsg":""}', 
-    //         // trim($this->_execute($args))
-    // }
-
     public function testEventMock() {
         $output = myCurl("http://192.168.0.52/event_dev/api/event/mock.php");
         $result = json_decode($output, true);
@@ -165,7 +126,8 @@ class MyTest extends \PHPUnit\Framework\TestCase {
         $this->assertStringContainsString("this is the mockup function",$message);
     }
     
-    public function testEventCreate() {
+        // curl -X POST -d "{\"text\" : \"test from phpunit\",\"host\" : \"test host\",\"type\" : \"sqlite test\"}"  "http://192.168.0.52/event_dev/api/event/create.php"    
+        public function testEventCreate() {
         $url = "http://192.168.0.52/event_dev/api/event/create.php";
 
         // //The data you want to send via POST (seperated http query fields like : text=text1&host=hostABC&type=this+is+mytype)
@@ -180,7 +142,7 @@ class MyTest extends \PHPUnit\Framework\TestCase {
     
         //The data you want to send via POST (as a json string)
         $fields_string = '{
-            "text" : "test from postman",
+            "text" : "test from phpunit",
             "host" : "test host",
             "type" : "sqlite test"
         }';  
@@ -194,4 +156,22 @@ class MyTest extends \PHPUnit\Framework\TestCase {
         $this->assertStringContainsString("event created on ",$message);
     }
 
+    # curl "http://192.168.0.52/event_dev/api/event/read_single.php?id=5"
+    public function testEventRead() {
+        $output = myCurl("http://192.168.0.52/event_dev/api/event/read.php");
+        $result = json_decode($output, true);
+        $num = count($result);
+        //echo "number of records found: " . $num;
+        $this->assertGreaterThan(1,$num);
+        if ($num > 0) {
+            $rec = $result[0];
+            // echo "rec : \n";
+            // var_dump($rec);
+            // echo "\n";
+            $t = $rec["text"];
+            $this->assertStringContainsString("test from phpunit",$t);
+            
+        }
+    }
+    
 }
