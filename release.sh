@@ -24,14 +24,12 @@ git tag | tail -n 1 > version.tmp
 git checkout `cat version.tmp`
 
 # this should be done by ansible only once
-# sudo mkdir -p /opt/venv/watchdog_prod
-# sudo virtualenv /opt/venv/watchdog_prod
-# sudo cp /home/toto/watchdog/params.py /opt/watchdog
+# sudo mkdir -p /var/www/event
 
-sudo mkdir -p /opt/event/
-sudo cp -rv {api,config,models,version.tmp} /opt/event/
-sudo cp -v params.php /opt/event/
-sudo vi /opt/event/params.php
+sudo mkdir -p /var/www/event/
+sudo cp -rv {api,config,models,version.tmp} /var/www/event/
+sudo cp -v params.php /var/www/event/
+sudo vi /var/www/event/params.php
 
 rm version.tmp
 
