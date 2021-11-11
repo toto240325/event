@@ -5,9 +5,12 @@
 
   include_once '../../config/Database.php';
   include_once '../../models/Event.php';
+  include '../../params.php';
+  //date_default_timezone_set('Europe/Paris');
+
 
   // Instantiate DB & connect
-  $database = new Database_mysql();
+  $database = new Database($params);
   $db = $database->connect();
   $driver = $db->getAttribute(PDO::ATTR_DRIVER_NAME);
 

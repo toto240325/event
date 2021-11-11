@@ -19,11 +19,11 @@
   // Get raw evented data
   $data = json_decode(file_get_contents("php://input"));
 
-  $data = json_decode('{
-    "text" : "backup of HP455G7",
-    "host" : "mypc3",
-    "type" : "sqlite test"
-  }');
+  // $data = json_decode('{
+  //   "text" : "backup of HP455G7",
+  //   "host" : "mypc3",
+  //   "type" : "sqlite test"
+  // }');
 
   $event->text = $data->text;
   $event->type = $data->type;
