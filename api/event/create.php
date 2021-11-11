@@ -7,9 +7,10 @@
 
   include_once '../../config/Database.php';
   include_once '../../models/Event.php';
+  include '../../params.php';
 
   // Instantiate DB & connect
-  $database = new Database_mysql();
+  $database = new Database($params);
   $db = $database->connect();
 
   // Instantiate blog event object
@@ -17,6 +18,12 @@
 
   // Get raw evented data
   $data = json_decode(file_get_contents("php://input"));
+
+  $data = json_decode('{
+    "text" : "backup of HP455G7",
+    "host" : "mypc3",
+    "type" : "sqlite test"
+  }');
 
   $event->text = $data->text;
   $event->type = $data->type;

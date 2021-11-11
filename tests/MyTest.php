@@ -104,7 +104,6 @@ function post($url,$fields_string) {
     return $contents;
 }
 
-
 class MyTest extends \PHPUnit\Framework\TestCase {
 
     public function testThatStringMatch() {

@@ -1,29 +1,42 @@
 <?php 
 
-$db_type = "";
-
 #mysql database
-class Database_mysql {
+class Database {
   // DB Params
-  public $host = 'localhost';
   public $db_name = 'mydatabase';
-  private $username = 'toto';
-  private $password = 'Toto!';
+  public $db_type;
+  public $mysql_host = 'localhost';
   private $conn;
 
+  // Constructor with params
+  public function __construct($params) {
+    $this->mysql_username = $params["mysql_username"];
+    $this->mysql_password = $params["mysql_password"];  
+    $this->db_type = $params["db_type"];  
+    $this->sqlite_db = $params["sqlite_db"];  
+  }
+  
   // DB Connect
   public function connect() {
-    global $db_type;
-    $db_type = "mysql";
     $this->conn = null;
 
-    try { 
-      $this->conn = new PDO('mysql:host=' . $this->host . ';dbname=' . $this->db_name, $this->username, $this->password);
-      $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    } catch(PDOException $e) {
-      echo 'Connection Error: ' . $e->getMessage();
+    if ($this ->db_type == "mysql") {
+      try { 
+        $this->conn = new PDO('mysql:host=' . $this->mysql_host . ';dbname=' . $this->db_name, $this->mysql_username, $this->mysql_password);
+        $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+      } catch(PDOException $e) {
+        echo 'Mysql connection Error: ' . $e->getMessage();
+      }
+    } elseif ($this->db_type == "sqlite") {
+      try { 
+        $this->conn = new PDO('sqlite:'. $this->sqlite_db);
+        $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+      } catch(PDOException $e) {
+        echo 'Sqlite connection Error: ' . $e->getMessage();
+      }
+    } else {
+      die("unknown db_type : " . $this->db_type);
     }
-
     return $this->conn;
   }
 }
