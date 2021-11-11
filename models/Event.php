@@ -74,7 +74,8 @@
     // Create event
     public function create() {
           // Create query
-          $query = 'INSERT INTO ' . $this->table . ' SET text = :text, host = :host, type = :type';
+          //$query = 'INSERT INTO ' . $this->table . ' SET text = :text, host = :host, type = :type';
+          $query = 'INSERT INTO ' . $this->table . ' (text, host, type) values (:text, :host, :type)';
 
           // Prepare statement
           $stmt = $this->conn->prepare($query);

@@ -23,7 +23,6 @@
       echo "Running on this driver : " . $driver . "\n";
     }
     // echo "Server Info : " . $db->getAttribute(PDO::ATTR_SERVER_INFO);
-    
     try {
 
       $db->exec("CREATE TABLE IF NOT EXISTS messages2 (
@@ -34,9 +33,7 @@
     } catch(PDOException $e) {
       echo 'Connection Error: ' . $e->getMessage();
     }
-
     $result = $db->query("SELECT name FROM sqlite_master WHERE type='table';");
-  
     echo "Tables in this db:\n";
     // Loop thru all data from messages table 
     // and insert it to file db
@@ -46,19 +43,16 @@
   }
   // show_tables2();
 
-
   // Instantiate event object
   $event = new Event($db);
+  // event query
+  $result = $event->read();
 
   if ($database->db_type == "mysql") {
-    // Blog event query
-    $result = $event->read();
     // Get row count
     $num = $result->rowCount();
-  } elseif ($db->db_type == "sqlitel") {
-
+  } elseif ($database->db_type == "sqlite") {
     // Get row count this works for mysql but doesn't work well for sqlite
-    //$num = $result->rowCount();
     $item = $result->fetchAll(PDO::FETCH_ASSOC); 
     if($item && count($item)){ 
       $num = count($item);
@@ -67,6 +61,8 @@
     } else {
       $num = 0;
     }
+  } else {
+    die("unknown db_type !");
   }
 
   // Check if any events
