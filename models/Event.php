@@ -44,18 +44,45 @@
 
     // Get Single event
     public function read_single() {
+      // Create query
+      $query = 'SELECT e.id, e.text, e.host, e.type, e.time
+          FROM ' . $this->table . ' e
+          WHERE
+            e.id = ?
+          LIMIT 0,1';
+
+      // Prepare statement
+      $stmt = $this->conn->prepare($query);
+
+      // Bind ID
+      $stmt->bindParam(1, $this->id);
+
+      // Execute query
+      $stmt->execute();
+
+      $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+      // Set properties
+      $this->text = $row['text'];
+      $this->host = $row['host'];
+      $this->type = $row['type'];
+      $this->time = $row['time'];
+}
+
+// Read last event of a given type
+    public function read_last() {
           // Create query
           $query = 'SELECT e.id, e.text, e.host, e.type, e.time
               FROM ' . $this->table . ' e
               WHERE
-                e.id = ?
+                e.type = ?
               LIMIT 0,1';
 
           // Prepare statement
           $stmt = $this->conn->prepare($query);
 
           // Bind ID
-          $stmt->bindParam(1, $this->id);
+          $stmt->bindParam(1, $this->type);
 
           // Execute query
           $stmt->execute();
@@ -63,6 +90,7 @@
           $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
           // Set properties
+          $this->id = $row['id'];
           $this->text = $row['text'];
           $this->host = $row['host'];
           $this->type = $row['type'];

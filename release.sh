@@ -6,10 +6,12 @@ git push --set-upstream origin sqlite2
 git pull
 git push
 
+# if sub-branch of the develop branch has been created : 
 git checkout develop
 git merge new_dev_branch
 git pull
 git push
+
 
 git checkout master
 git merge develop
@@ -29,7 +31,6 @@ git checkout `cat version.tmp`
 # scp /opt/db/mydatabase.db sd8:/tmp/
 # ssh sd8 "sudo mkdir -p /opt/db"
 # ssh sd8 "sudo cp -v /tmp/mydatabase.db /opt/db/"
-
 
 
 ssh sd8 "sudo mkdir -p /var/www/event/"

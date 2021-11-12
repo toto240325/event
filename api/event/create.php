@@ -7,6 +7,7 @@
 
   include_once '../../config/Database.php';
   include_once '../../models/Event.php';
+  include '../../utilities.php';
   include '../../params.php';
 
   // Instantiate DB & connect
