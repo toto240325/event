@@ -5,9 +5,8 @@
 
   include_once '../../config/Database.php';
   include_once '../../models/Event.php';
+  include '../../utilities.php';
   include '../../params.php';
-
-  //date_default_timezone_set('Europe/Paris');
 
   // Instantiate DB & connect
   $database = new Database($params);
@@ -79,7 +78,7 @@
         'text' => $text,
         'host' => $host,
         'type' => $type,
-        'time' => $time,
+        'time' => convert_UTC_to_CET($time)
       );
 
       // Push to "data"
