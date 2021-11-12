@@ -144,7 +144,7 @@ class MyTest extends \PHPUnit\Framework\TestCase {
         $fields_string = '{
             "text" : "test from phpunit",
             "host" : "test host",
-            "type" : "sqlite test"
+            "type" : "temperature"
         }';  
     
         $json = post($url,$fields_string);
@@ -156,7 +156,7 @@ class MyTest extends \PHPUnit\Framework\TestCase {
         $this->assertStringContainsString("event created on ",$message);
     }
 
-    # curl "http://192.168.0.52/event_dev/api/event/read_single.php?id=5"
+    # curl "http://192.168.0.52/event_dev/api/event/read.php"
     public function testEventRead() {
         $output = myCurl("http://192.168.0.52/event_dev/api/event/read.php");
         $result = json_decode($output, true);
@@ -173,5 +173,29 @@ class MyTest extends \PHPUnit\Framework\TestCase {
             
         }
     }
+    
+    # curl "http://192.168.0.52/event_dev/api/event/read_single.php?id=1"
+    public function testEventReadSingle() {
+        $output = myCurl("http://192.168.0.52/event_dev/api/event/read_single.php?id=1");
+        $result = json_decode($output, true);
+        $error = $result["error"];
+        $this->assertEquals("",$error);
+        if ($result["error"] =="") {
+            $t = $result["id"];
+            $this->assertStringContainsString("1",$t);
+            }
+        }
+
+    # curl "http://192.168.0.52/event_dev/api/event/read_last.php?type=temperature"
+    public function testEventReadLast() {
+        $output = myCurl("http://192.168.0.52/event_dev/api/event/read_last.php?type=temperature");
+        $result = json_decode($output, true);
+        $error = $result["error"];
+        $this->assertEquals("",$error);
+        if ($result["error"] =="") {
+            $t = $result["type"];
+            $this->assertStringContainsString("temperature",$t);
+            }
+        }
     
 }

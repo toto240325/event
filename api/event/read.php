@@ -43,7 +43,7 @@
   // show_tables2();
 
   // Instantiate event object
-  $event = new Event($db);
+  $event = new Event($db,$database->db_type);
   // event query
   $result = $event->read();
 

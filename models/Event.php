@@ -2,6 +2,7 @@
   class Event {
     // DB stuff
     private $conn;
+    private $db_type;
     private $table = 'events';
 
     // CREATE TABLE `events` (
@@ -19,10 +20,12 @@
     public $type;
     public $text;
     public $time;
+    public $error = "";
 
     // Constructor with DB
-    public function __construct($db) {
+    public function __construct($db,$db_type) {
       $this->conn = $db;
+      $this->db_type = $db_type;
     }
 
     // Get events
@@ -43,6 +46,37 @@
     }
 
     // Get Single event
+    public function read_dummy() {
+      // Create query
+      $query = 'SELECT d.id
+          FROM dummy d
+          WHERE
+            d.id = ?
+          LIMIT 0,1';
+
+      // Prepare statement
+      $stmt = $this->conn->prepare($query);
+
+      // Bind ID
+      $stmt->bindParam(1, $this->id);
+
+      // Execute query
+      $stmt->execute();
+
+      $rc = $stmt->rowCount();
+
+      $a = $stmt;
+
+
+
+      $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+      // Set properties
+      $this->id = $row['id'];
+}
+
+
+// Get Single event
     public function read_single() {
       // Create query
       $query = 'SELECT e.id, e.text, e.host, e.type, e.time
@@ -60,41 +94,89 @@
       // Execute query
       $stmt->execute();
 
-      $row = $stmt->fetch(PDO::FETCH_ASSOC);
+      # check if there is at least one record
+      if ($this->db_type == "mysql") {
+        // Get row count
+        $num = $stmt->rowCount();
+      } elseif ($this->db_type == "sqlite") {
+        // Get row count this works for mysql but doesn't work well for sqlite
+        $item = $stmt->fetchAll(PDO::FETCH_ASSOC); 
+        if($item && count($item)){ 
+          $num = count($item);
+          //reset the rows pointer to the beginning
+          $stmt->execute();
+        } else {
+          $num = 0;
+        }
+      } else {
+        die("unknown db_type !");
+      }
+    
+      if ($num > 0) {
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-      // Set properties
-      $this->text = $row['text'];
-      $this->host = $row['host'];
-      $this->type = $row['type'];
-      $this->time = $row['time'];
+        // Set properties
+        $this->id = $row['id'];
+        $this->text = $row['text'];
+        $this->host = $row['host'];
+        $this->type = $row['type'];
+        $this->time = $row['time'];
+      }
+      else {
+        $this->error = "no record found";
+      }
+      
 }
 
 // Read last event of a given type
     public function read_last() {
-          // Create query
-          $query = 'SELECT e.id, e.text, e.host, e.type, e.time
-              FROM ' . $this->table . ' e
-              WHERE
-                e.type = ?
-              LIMIT 0,1';
+      // Create query
+      $query = 'SELECT e.id, e.text, e.host, e.type, e.time
+          FROM ' . $this->table . ' e
+          WHERE
+            e.type = ?
+          LIMIT 0,1';
 
-          // Prepare statement
-          $stmt = $this->conn->prepare($query);
+      // Prepare statement
+      $stmt = $this->conn->prepare($query);
 
-          // Bind ID
-          $stmt->bindParam(1, $this->type);
+      // Bind ID
+      $stmt->bindParam(1, $this->type);
 
-          // Execute query
+      // Execute query
+      $stmt->execute();
+
+      # check if there is at least one record
+      if ($this->db_type == "mysql") {
+        // Get row count
+        $num = $stmt->rowCount();
+      } elseif ($this->db_type == "sqlite") {
+        // Get row count this works for mysql but doesn't work well for sqlite
+        $item = $stmt->fetchAll(PDO::FETCH_ASSOC); 
+        if($item && count($item)){ 
+          $num = count($item);
+          //reset the rows pointer to the beginning
           $stmt->execute();
+        } else {
+          $num = 0;
+        }
+      } else {
+        die("unknown db_type !");
+      }
+    
+      if ($num > 0) {
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-          $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-          // Set properties
-          $this->id = $row['id'];
-          $this->text = $row['text'];
-          $this->host = $row['host'];
-          $this->type = $row['type'];
-          $this->time = $row['time'];
+        // Set properties
+        $this->id = $row['id'];
+        $this->text = $row['text'];
+        $this->host = $row['host'];
+        $this->type = $row['type'];
+        $this->time = $row['time'];
+      }
+      else {
+        $this->error = "no record found";
+      }
     }
 
     // Create event

@@ -9,12 +9,12 @@
   include_once '../../models/Event.php';
 
   // Instantiate DB & connect
-  $database = new Database();
+  $database = new Database($params);
   $db = $database->connect();
 
   // Instantiate blog event object
-  $event = new Event($db);
-
+  $event = new Event($db,$database->db_type);
+  
   // Get raw evented data
   $data = json_decode(file_get_contents("php://input"));
 

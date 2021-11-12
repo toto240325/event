@@ -15,8 +15,8 @@
   $db = $database->connect();
 
   // Instantiate blog event object
-  $event = new event($db);
-
+  $event = new Event($db,$database->db_type);
+  
   // Get raw evented data
   $input = file_get_contents("php://input");
   //echo "input : " . $input . "\n";
