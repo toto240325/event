@@ -5,6 +5,7 @@
 
   include_once '../../config/Database.php';
   include_once '../../models/Event.php';
+  include '../../utilities.php';
   include '../../params.php';
 
   // Instantiate DB & connect
@@ -27,7 +28,7 @@
     'text' => $event->text,
     'host' => $event->host,
     'type' => $event->type,
-    'time' => $event->time,
+    'time' => convert_UTC_to_CET($time),
   );
 
   // Make JSON

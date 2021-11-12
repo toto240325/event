@@ -4,3 +4,4 @@ params.php
 vendor/
 event_dev.txt
 mydatabase*.db
+.vscode
