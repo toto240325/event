@@ -65,6 +65,9 @@ git push --tag
 # git tag | tail -n 1 > version.tmp
 # git checkout `cat version.tmp`
 
+# let's get back to branch develop and continue developments
+git checkout develop
+
 exit
 
 ssh sd8 "sudo mkdir -p /var/www/event/"
