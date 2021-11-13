@@ -6,3 +6,4 @@ event_dev.txt
 mydatabase*.db
 .vscode
 version.tmp
+mydatabase_dev.db.bak

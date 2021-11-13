@@ -45,35 +45,32 @@
       return $stmt;
     }
 
-    // Get Single event
-    public function read_dummy() {
-      // Create query
-      $query = 'SELECT d.id
-          FROM dummy d
-          WHERE
-            d.id = ?
-          LIMIT 0,1';
+//     // Get Single event
+//     public function read_dummy() {
+//       // Create query
+//       $query = 'SELECT d.id
+//           FROM dummy d
+//           WHERE
+//             d.id = ?
+//           LIMIT 0,1';
 
-      // Prepare statement
-      $stmt = $this->conn->prepare($query);
+//       // Prepare statement
+//       $stmt = $this->conn->prepare($query);
 
-      // Bind ID
-      $stmt->bindParam(1, $this->id);
+//       // Bind ID
+//       $stmt->bindParam(1, $this->id);
 
-      // Execute query
-      $stmt->execute();
+//       // Execute query
+//       $stmt->execute();
 
-      $rc = $stmt->rowCount();
+//       $rc = $stmt->rowCount();
+//       $a = $stmt;
 
-      $a = $stmt;
+//       $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-
-
-      $row = $stmt->fetch(PDO::FETCH_ASSOC);
-
-      // Set properties
-      $this->id = $row['id'];
-}
+//       // Set properties
+//       $this->id = $row['id'];
+// }
 
 
 // Get Single event
