@@ -59,9 +59,10 @@ class MyTest extends \PHPUnit\Framework\TestCase {
         $this->assertStringContainsString("this is the mockup function",$message);
     }
     
-    // curl -X POST -d "{\"text\" : \"test from phpunit\",\"host\" : \"test host\",\"type\" : \"sqlite test\"}"  event_server + "/api/event/create.php"    
+
     public function testEventCreate() {
-        global $event_server;
+    // curl -X POST -d "{\"text\" : \"test from phpunit\",\"host\" : \"test host\",\"type\" : \"sqlite test\"}"  event_server + "/api/event/create.php"    
+    global $event_server;
         $url = $event_server . "/api/event/create.php";
 
         // //The data you want to send via POST (seperated http query fields like : text=text1&host=hostABC&type=this+is+mytype)
@@ -90,9 +91,10 @@ class MyTest extends \PHPUnit\Framework\TestCase {
         $this->assertStringContainsString("event created on ",$message);
     }
 
-    # curl "http://192.168.0.52/event_dev/api/event/read.php"
+
     public function testEventRead() {
-        global $event_server;
+    # curl "http://192.168.0.52/event_dev/api/event/read.php"
+    global $event_server;
         $output = myCurl($event_server . "/api/event/read.php");
         $result = json_decode($output, true);
         $num = count($result);
