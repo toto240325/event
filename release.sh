@@ -15,6 +15,14 @@ fi
 
 tag=$1
 branch=`git status | awk '/On branch/ {print $3}'`
+
+if [ $branch != "develop"]
+    then   
+        echo "Current branch is $branch while it should be develop"
+        echo "Aborting"
+        exit
+fi
+
 git status
 
 echo ""
@@ -39,7 +47,6 @@ git pull
 git push
 
 exit
-
 
 # if sub-branch of the develop branch has been created : 
 git checkout develop
