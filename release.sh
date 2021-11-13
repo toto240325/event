@@ -1,45 +1,49 @@
 # Usage : 
-# bash release.sh <tag>
+# bash release.sh
 # this will 
+# - check that this is the develop branch
+# - display all existing tags
+# - ask for tag of this new version
 # - tag this (develop) branch with the given tag
 # - merge the current (develop) branch with master and push it to origin
 # prerequisite
 # - you are in the right (development) directory
 # - the code is ready to be committed
 
-if [ $# -eq 0 ]
-  then
-    echo "Usage : bash release.sh <tag>"
-    exit
-fi
+# if [ $# -eq 0 ]
+#   then
+#     echo "Usage : bash release.sh <tag>"
+#     exit
+# fi
+# tag=$1
 
-tag=$1
+# check this is the develop branch
 branch=`git status | awk '/On branch/ {print $3}'`
 
-if [ $branch != "develop"]
+if [ $branch != "develop" ]
     then   
         echo "Current branch is $branch while it should be develop"
         echo "Aborting"
         exit
 fi
 
+# show git status and tags, and ask for the new tag
 git status
-
 echo ""
 echo "Current tags"
 git tag
-echo "Releasing $tag from current branch : $branch"
-echo "I am going to commit all, tag it with $1, merge into master and push to origin"
-echo "Are you sure you want to continue ?"
-read var_resp
+echo "Releasing this new version from current branch : $branch"
+echo "I am going to commit all, tag it with the new tag, merge into master and push to origin"
+echo "Enter a new tag to continue or 'n' to abort"
+read tag
 
-if [ $var_resp != "y" ]
+if [[ "$tag" == [nN] ]
     then
         echo "Aborting"
         exit
 fi
-echo "Continuing"
-
+echo "Tagging new version with $tag"
+exit
 # pushing current branch to origin
 git commit -a -m "$tag"
 git push --set-upstream origin $branch
@@ -48,19 +52,13 @@ git push
 
 exit
 
-# if sub-branch of the develop branch has been created : 
-git checkout develop
-git merge new_dev_branch
-git pull
-git push
-
 
 git checkout master
-git merge develop
+git merge develop -m "$tag"
 git pull
 git push
 
-git tag "v0.1"
+git tag "$tag"
 git push --tag
 #check last version
 #git log --decorate --all --oneline  | grep tag | head -n 1 | awk '{print $2}' FS='tag: ' | awk '{ print $1}' FS=',' | sudo tee /opt/watchdog/version.txt
