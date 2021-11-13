@@ -68,7 +68,25 @@ git push --tag
 # let's get back to branch develop and continue developments
 git checkout develop
 
+echo ""
+echo "Host on which you'd like to deploy the latest version ? (return for none)"
+read host
+
+if [ "$host" == "" ]
+    then
+        echo "Aborting"
+        exit
+fi
+
+echo "Deploying on host $host"
+
+ssh $host "curl -L https://api.github.com/repos/toto240325/event/tarball | tar xzvf - --one-top-level=/var/www/event --strip-components 1"
+
+
 exit
+
+# after the release has been created in Github, it can be downloaded on the target node like this :
+ssh sd3 "curl -L https://api.github.com/repos/toto240325/event/tarball | tar xzvf - --one-top-level=/var/www/event --strip-components 1"
 
 
 ssh sd8 "sudo mkdir -p /var/www/event/"
