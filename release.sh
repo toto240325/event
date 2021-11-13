@@ -1,10 +1,45 @@
-#
-cd /home/toto/event_dev
+# Usage : 
+# bash release.sh <tag>
+# this will 
+# - tag this (develop) branch with the given tag
+# - merge the current (develop) branch with master and push it to origin
+# prerequisite
+# - you are in the right (development) directory
+# - the code is ready to be committed
+
+if [ $# -eq 0 ]
+  then
+    echo "Usage : bash release.sh <tag>"
+    exit
+fi
+
+tag=$1
+branch=`git status | awk '/On branch/ {print $3}'`
 git status
-git commit -a -m "new functionality"
-git push --set-upstream origin sqlite2
+
+echo ""
+echo "Current tags"
+git tag
+echo "Releasing $tag from current branch : $branch"
+echo "I am going to commit all, tag it with $1, merge into master and push to origin"
+echo "Are you sure you want to continue ?"
+read var_resp
+
+if [ $var_resp != "y" ]
+    then
+        echo "Aborting"
+        exit
+fi
+echo "Continuing"
+
+# pushing current branch to origin
+git commit -a -m "$tag"
+git push --set-upstream origin $branch
 git pull
 git push
+
+exit
+
 
 # if sub-branch of the develop branch has been created : 
 git checkout develop
