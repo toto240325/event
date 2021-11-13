@@ -43,6 +43,7 @@ if [[ "$tag" == [nN] ]]
         exit
 fi
 echo "Tagging new version with $tag"
+echo $tag > version.txt
 # pushing current branch to origin
 git commit -a -m "$tag"
 git push --set-upstream origin $branch
@@ -57,6 +58,7 @@ git push
 git tag "$tag"
 git push --tag
 
+
 # let's avoid this next step by assuming we have just committed the latest version
 # #check last version
 # #git log --decorate --all --oneline  | grep tag | head -n 1 | awk '{print $2}' FS='tag: ' | awk '{ print $1}' FS=',' | sudo tee /opt/watchdog/version.txt
@@ -65,10 +67,8 @@ git push --tag
 
 exit
 
-
 ssh sd8 "sudo mkdir -p /var/www/event/"
 ssh sd8 "sudo git clone --depth 1 https://github.com/toto240325/event.git"
-
 
 
 scp -v params.php sd8:/var/www/event/
