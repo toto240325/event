@@ -34,8 +34,8 @@
   $event->host = $data->host;
   
   // Create event
-  // $dt = new DateTime("now", new DateTimeZone('Europe/Paris'));
-  // $dt_string = $dt->format('Y/m/d H:i:s');
+  $dt = new DateTime("now", new DateTimeZone('Europe/Paris'));
+  $dt_string = $dt->format('Y/m/d H:i:s');
 
   if($event->create()) {
     echo json_encode(

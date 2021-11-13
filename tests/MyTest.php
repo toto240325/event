@@ -3,8 +3,9 @@
 // php vendor/bin/phpunit tests/MyTest.php --stderr --testdox # --stderr to avoid errors to interfere ??? --testdox : better output ?
 // ./vendor/bin/phpunit --testdox
 
-$event_server = "http://192.168.0.52/event_dev";
+#$event_server = "http://192.168.0.52/event_dev";
 #$event_server = "http://192.168.0.78/event";
+$event_server = "http://192.168.0.73/event";
 
 function myCurl($url) {
     $curl = curl_init();
