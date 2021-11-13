@@ -70,6 +70,7 @@ git checkout develop
 
 exit
 
+
 ssh sd8 "sudo mkdir -p /var/www/event/"
 ssh sd8 "sudo git clone --depth 1 https://github.com/toto240325/event.git"
 
