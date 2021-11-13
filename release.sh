@@ -37,13 +37,12 @@ echo "I am going to commit all, tag it with the new tag, merge into master and p
 echo "Enter a new tag to continue or 'n' to abort"
 read tag
 
-if [[ "$tag" == [nN] ]
+if [[ "$tag" == [nN] ]]
     then
         echo "Aborting"
         exit
 fi
 echo "Tagging new version with $tag"
-exit
 # pushing current branch to origin
 git commit -a -m "$tag"
 git push --set-upstream origin $branch
