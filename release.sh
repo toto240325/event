@@ -49,9 +49,6 @@ git push --set-upstream origin $branch
 git pull
 git push
 
-exit
-
-
 git checkout master
 git merge develop -m "$tag"
 git pull
@@ -66,6 +63,7 @@ git push --tag
 # git tag | tail -n 1 > version.tmp
 # git checkout `cat version.tmp`
 
+exit
 
 
 ssh sd8 "sudo mkdir -p /var/www/event/"
