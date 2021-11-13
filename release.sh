@@ -59,17 +59,13 @@ git push
 
 git tag "$tag"
 git push --tag
-#check last version
-#git log --decorate --all --oneline  | grep tag | head -n 1 | awk '{print $2}' FS='tag: ' | awk '{ print $1}' FS=',' | sudo tee /opt/watchdog/version.txt
-git tag | tail -n 1 > version.tmp
-git checkout `cat version.tmp`
 
-# this should be done by ansible only once
-# sudo mkdir -p /var/www/event
-# sudo cp -v params.php /var/www/event/
-# scp /opt/db/mydatabase.db sd8:/tmp/
-# ssh sd8 "sudo mkdir -p /opt/db"
-# ssh sd8 "sudo cp -v /tmp/mydatabase.db /opt/db/"
+# let's avoid this next step by assuming we have just committed the latest version
+# #check last version
+# #git log --decorate --all --oneline  | grep tag | head -n 1 | awk '{print $2}' FS='tag: ' | awk '{ print $1}' FS=',' | sudo tee /opt/watchdog/version.txt
+# git tag | tail -n 1 > version.tmp
+# git checkout `cat version.tmp`
+
 
 
 ssh sd8 "sudo mkdir -p /var/www/event/"
