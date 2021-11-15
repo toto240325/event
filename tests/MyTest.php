@@ -3,9 +3,7 @@
 // php vendor/bin/phpunit tests/MyTest.php --stderr --testdox # --stderr to avoid errors to interfere ??? --testdox : better output ?
 // ./vendor/bin/phpunit --testdox
 
-#$event_server = "http://192.168.0.52/event_dev";
-#$event_server = "http://192.168.0.78/event";
-$event_server = "http://192.168.0.73/event";
+include '../params.php';
 
 function myCurl($url) {
     $curl = curl_init();
@@ -59,9 +57,10 @@ class MyTest extends \PHPUnit\Framework\TestCase {
         $this->assertStringContainsString("this is the mockup function",$message);
     }
     
-    // curl -X POST -d "{\"text\" : \"test from phpunit\",\"host\" : \"test host\",\"type\" : \"sqlite test\"}"  event_server + "/api/event/create.php"    
+
     public function testEventCreate() {
-        global $event_server;
+    // curl -X POST -d "{\"text\" : \"test from phpunit\",\"host\" : \"test host\",\"type\" : \"sqlite test\"}"  event_server + "/api/event/create.php"    
+    global $event_server;
         $url = $event_server . "/api/event/create.php";
 
         // //The data you want to send via POST (seperated http query fields like : text=text1&host=hostABC&type=this+is+mytype)
@@ -90,9 +89,10 @@ class MyTest extends \PHPUnit\Framework\TestCase {
         $this->assertStringContainsString("event created on ",$message);
     }
 
-    # curl "http://192.168.0.52/event_dev/api/event/read.php"
+
     public function testEventRead() {
-        global $event_server;
+    # curl "http://192.168.0.52/event_dev/api/event/read.php"
+    global $event_server;
         $output = myCurl($event_server . "/api/event/read.php");
         $result = json_decode($output, true);
         $num = count($result);
@@ -134,5 +134,25 @@ class MyTest extends \PHPUnit\Framework\TestCase {
             $this->assertStringContainsString("temperature",$t);
             }
         }
-    
+
+        public function testEventReadWhere() {
+            # curl "http://192.168.0.52/event_dev/api/event/read_where.php?type=temperature&limit=3"
+            global $event_server;
+                $output = myCurl($event_server . "/api/event/read.php");
+                $result = json_decode($output, true);
+                $num = count($result);
+                //echo "number of records found: " . $num;
+                $this->assertGreaterThan(1,$num);
+                if ($num > 0) {
+                    $rec = $result[0];
+                    // echo "rec : \n";
+                    // var_dump($rec);
+                    // echo "\n";
+                    $t = $rec["text"];
+                    $this->assertStringContainsString("test from phpunit",$t);
+                    
+                }
+            }
+            
+            
 }

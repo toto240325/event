@@ -4,3 +4,4 @@ params.php
 vendor/
 event_dev.txt
 mydatabase_dev.db.bak
+previous_versions
