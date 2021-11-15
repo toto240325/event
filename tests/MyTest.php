@@ -3,9 +3,7 @@
 // php vendor/bin/phpunit tests/MyTest.php --stderr --testdox # --stderr to avoid errors to interfere ??? --testdox : better output ?
 // ./vendor/bin/phpunit --testdox
 
-#$event_server = "http://192.168.0.52/event_dev";
-#$event_server = "http://192.168.0.78/event";
-$event_server = "http://192.168.0.73/event";
+include '../params.php';
 
 function myCurl($url) {
     $curl = curl_init();
@@ -136,5 +134,25 @@ class MyTest extends \PHPUnit\Framework\TestCase {
             $this->assertStringContainsString("temperature",$t);
             }
         }
-    
+
+        public function testEventReadWhere() {
+            # curl "http://192.168.0.52/event_dev/api/event/read_where.php?type=temperature&limit=3"
+            global $event_server;
+                $output = myCurl($event_server . "/api/event/read.php");
+                $result = json_decode($output, true);
+                $num = count($result);
+                //echo "number of records found: " . $num;
+                $this->assertGreaterThan(1,$num);
+                if ($num > 0) {
+                    $rec = $result[0];
+                    // echo "rec : \n";
+                    // var_dump($rec);
+                    // echo "\n";
+                    $t = $rec["text"];
+                    $this->assertStringContainsString("test from phpunit",$t);
+                    
+                }
+            }
+            
+            
 }

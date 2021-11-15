@@ -45,6 +45,27 @@
       return $stmt;
     }
 
+    public function read_where($type,$limit) {
+      // read the last $limit events (sorted chronologically) of type $type (if provided)
+
+      // Create query
+      $query = 'SELECT e.id, e.text, e.host, e.type, e.time ' .
+        'FROM ' . $this->table . ' e ' .
+        ($type == '' ? '' : 'WHERE e.type = "' . $type . '"') .
+        'ORDER BY ' .
+        '  e.time DESC ' .
+        ($limit == 0 ? '' : 'LIMIT "' . $limit . '"')
+        ;
+      
+      // Prepare statement
+      $stmt = $this->conn->prepare($query);
+
+      // Execute query
+      $stmt->execute();
+
+      return $stmt;
+    }
+
 //     // Get Single event
 //     public function read_dummy() {
 //       // Create query
