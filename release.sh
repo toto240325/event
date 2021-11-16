@@ -20,7 +20,7 @@
 # check if ssh-agent already knows the ssh key
 output=`ssh-add -l 2>&1`
 
-if [ "$output" == "The agent has no identities." ] 
+if [[ "$output" == "The agent has no identities." || "$output" == "Could not open a connection to your authentication agent." ]]
     then
         echo "please first load your key with sshagent"
         exit
