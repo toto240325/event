@@ -51,6 +51,16 @@ if [[ "$tag" == [nN] ]]
         echo "Aborting"
         exit
 fi
+
+echo "Enter the commit message"
+read msg
+
+if [[ "$msg" == "" ]]
+    then
+        echo "Blank commit message. Aborting"
+        exit
+fi
+
 echo "Tagging new version with $tag"
 echo $tag > version.txt
 # pushing current branch to origin
