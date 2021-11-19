@@ -1,9 +1,10 @@
 <?php
 // two ways to execute the test suite : 
-// php vendor/bin/phpunit tests/MyTest.php --stderr --testdox # --stderr to avoid errors to interfere ??? --testdox : better output ?
+// cd ~/event_dev ; php vendor/bin/phpunit tests/MyTest.php --stderr --testdox # --stderr to avoid errors to interfere ??? --testdox : better output ?
 // ./vendor/bin/phpunit --testdox
 
-include '../params.php';
+echo "current directory : " . getcwd() . "\n";
+include 'params.php';
 
 function myCurl($url) {
     $curl = curl_init();
