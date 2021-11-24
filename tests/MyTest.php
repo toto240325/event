@@ -5,6 +5,16 @@
 
 echo "current directory : " . getcwd() . "\n";
 include 'params.php';
+//include '../utils/log_event.php';
+
+
+function log_event($text,$type) {
+    # curl "http://192.168.0.52/event_dev/api/event/read_where.php?type=temperature&limit=3"
+    global $event_server;
+    $output = myCurl($event_server . "/api/event/readWhere.php?type=temperature&limit=4");
+    $result = json_decode($output, true);
+    return $result;
+}
 
 function myCurl($url) {
     $curl = curl_init();
@@ -60,8 +70,8 @@ class MyTest extends \PHPUnit\Framework\TestCase {
     
 
     public function testEventCreate() {
-    // curl -X POST -d "{\"text\" : \"test from phpunit\",\"host\" : \"test host\",\"type\" : \"sqlite test\"}"  event_server + "/api/event/create.php"    
-    global $event_server;
+        // curl -X POST -d "{\"text\" : \"test from phpunit\",\"host\" : \"test host\",\"type\" : \"sqlite test\"}"  event_server + "/api/event/create.php"    
+        global $event_server;
         $url = $event_server . "/api/event/create.php";
 
         // //The data you want to send via POST (seperated http query fields like : text=text1&host=hostABC&type=this+is+mytype)
@@ -93,7 +103,7 @@ class MyTest extends \PHPUnit\Framework\TestCase {
 
     public function testEventRead() {
     # curl "http://192.168.0.52/event_dev/api/event/read.php"
-    global $event_server;
+        global $event_server;
         $output = myCurl($event_server . "/api/event/read.php");
         $result = json_decode($output, true);
         $num = count($result);
@@ -120,8 +130,8 @@ class MyTest extends \PHPUnit\Framework\TestCase {
         if ($result["error"] =="") {
             $t = $result["id"];
             $this->assertStringContainsString("1",$t);
-            }
         }
+    }
 
     # curl "http://192.168.0.52/event_dev/api/event/read_last.php?type=temperature"
     public function testEventReadLast() {
@@ -133,27 +143,35 @@ class MyTest extends \PHPUnit\Framework\TestCase {
         if ($result["error"] =="") {
             $t = $result["type"];
             $this->assertStringContainsString("temperature",$t);
-            }
         }
+    }
 
-        public function testEventReadWhere() {
-            # curl "http://192.168.0.52/event_dev/api/event/read_where.php?type=temperature&limit=3"
-            global $event_server;
-                $output = myCurl($event_server . "/api/event/read.php");
-                $result = json_decode($output, true);
-                $num = count($result);
-                //echo "number of records found: " . $num;
-                $this->assertGreaterThan(1,$num);
-                if ($num > 0) {
-                    $rec = $result[0];
-                    // echo "rec : \n";
-                    // var_dump($rec);
-                    // echo "\n";
-                    $t = $rec["text"];
-                    $this->assertStringContainsString("test from phpunit",$t);
-                    
-                }
-            }
+    public function testEventReadWhere() {
+        # curl "http://192.168.0.52/event_dev/api/event/read_where.php?type=temperature&limit=3"
+        global $event_server;
+        $output = myCurl($event_server . "/api/event/readWhere.php?type=temperature&limit=4");
+        $result = json_decode($output, true);
+        $num = count($result);
+        //echo "number of records found: " . $num;
+        $this->assertEquals(4,$num);                
+    }           
+    public function testLogEvent() {
+        # curl "http://192.168.0.52/event_dev/api/event/read_where.php?type=temperature&limit=3"
+        global $event_server;
+        $result = log_event("test","mynewtype");
+        $output = myCurl($event_server . "/api/event/read.php");
+        $result = json_decode($output, true);
+        $num = count($result);
+        //echo "number of records found: " . $num;
+        $this->assertGreaterThan(1,$num);
+        if ($num > 0) {
+            $rec = $result[0];
+            // echo "rec : \n";
+            // var_dump($rec);
+            // echo "\n";
+            $t = $rec["text"];
+            $this->assertStringContainsString("test from phpunit",$t);
             
-            
+        }
+    }
 }
