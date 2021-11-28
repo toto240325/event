@@ -7,5 +7,6 @@ mydatabase_dev.db.bak
 previous_versions
 __pycache__/
 params.py
+params.ini
 logs.log
 obsolete/
