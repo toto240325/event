@@ -5,6 +5,9 @@ python test_log_event.py
 """
 import unittest
 import json
+
+import sys
+sys.path.insert(0, "/home/toto/utils")
 from log_event import log_event
 from log_event import read_events
 
@@ -14,12 +17,6 @@ class TestLogEvent(unittest.TestCase):
     """
     Test the function log_event from module log_event.py.
     """
-
-    def read_events(self):
-        
-
-
-    def test_read_events(self):
 
     def test_log_event(self):
         result_json = log_event("text","type")

@@ -153,6 +153,7 @@
           FROM ' . $this->table . ' e
           WHERE
             e.type = ?
+          ORDER BY e.time desc
           LIMIT 0,1';
 
       // Prepare statement
@@ -197,34 +198,70 @@
       }
     }
 
+
+    // // Get rowid of the last row created within this DB connection
+    // private function last_rowid() {
+    //   $query = 'select last_insert_rowid()';
+
+    //   // Prepare statement
+    //   $stmt = $this->conn->prepare($query);
+
+    //   // Execute query
+    //   if($stmt->execute()) {
+    //     if ($this->db_type == "mysql") {
+    //       // Get row count
+    //       $num = $stmt->rowCount();
+    //     } elseif ($this->db_type == "sqlite") {
+    //       // Get row count this works for mysql but doesn't work well for sqlite
+    //       $item = $stmt->fetchAll(PDO::FETCH_ASSOC); 
+    //       if($item && count($item)){ 
+    //         $num = count($item);
+    //         //reset the rows pointer to the beginning
+    //         $stmt->execute();
+    //       } else {
+    //         $num = 0;
+    //       }
+    //     } else {
+    //       die("unknown db_type !");
+    //     }
+    //   }
+
+        
+  //       return true;
+  // }
+
+
+
     // Create event
     public function create() {
-          // Create query
-          //$query = 'INSERT INTO ' . $this->table . ' SET text = :text, host = :host, type = :type';
-          $query = 'INSERT INTO ' . $this->table . ' (text, host, type) values (:text, :host, :type)';
+    
+      // Create query
+      //$query = 'INSERT INTO ' . $this->table . ' SET text = :text, host = :host, type = :type';
+      $query = 'INSERT INTO ' . $this->table . ' (text, host, type) values (:text, :host, :type)';
 
-          // Prepare statement
-          $stmt = $this->conn->prepare($query);
+      // Prepare statement
+      $stmt = $this->conn->prepare($query);
 
-          // Clean data
-          $this->text = htmlspecialchars(strip_tags($this->text));
-          $this->host = htmlspecialchars(strip_tags($this->host));
-          $this->type = htmlspecialchars(strip_tags($this->type));
+      // Clean data
+      $this->text = htmlspecialchars(strip_tags($this->text));
+      $this->host = htmlspecialchars(strip_tags($this->host));
+      $this->type = htmlspecialchars(strip_tags($this->type));
 
-          // Bind data
-          $stmt->bindParam(':text', $this->text);
-          $stmt->bindParam(':host', $this->host);
-          $stmt->bindParam(':type', $this->type);
+      // Bind data
+      $stmt->bindParam(':text', $this->text);
+      $stmt->bindParam(':host', $this->host);
+      $stmt->bindParam(':type', $this->type);
 
-          // Execute query
-          if($stmt->execute()) {
-            return true;
+      // Execute query
+      if($stmt->execute()) {        
+        $lastid = $this->conn->lastInsertId();
+        return $lastid;
       }
 
       // Print error if something goes wrong
       printf("Error: %s.\n", $stmt->error);
 
-      return false;
+      return -1;
     }
 
     // Update event
@@ -283,6 +320,6 @@
           printf("Error: %s.\n", $stmt->error);
 
           return false;
-    }
-    
+    } 
   }
+?>

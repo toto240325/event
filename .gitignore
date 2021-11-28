@@ -8,3 +8,4 @@ previous_versions
 __pycache__/
 params.py
 logs.log
+obsolete/

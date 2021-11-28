@@ -24,11 +24,11 @@
   // Delete event
   if($event->delete()) {
     echo json_encode(
-      array('message' => 'event Deleted')
+      array('message' => 'event deleted')
     );
   } else {
     echo json_encode(
-      array('message' => 'event Not Deleted')
+      array('message' => 'event not edleted')
     );
   }
 

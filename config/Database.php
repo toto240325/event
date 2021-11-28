@@ -41,24 +41,24 @@ class Database {
   }
 }
 
-# sqlite database
-class Database_sqlite {
-  // DB Params
-  private $conn;
+// # sqlite database
+// class Database_sqlite {
+//   // DB Params
+//   private $conn;
   
-  // DB Connect
-  public function connect() {
-    $this->conn = null;
-    try { 
-      $this->conn = new PDO('sqlite:/home/toto/event_dev/mydatabase_dev.db');
-      $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
-    } catch(PDOException $e) {
-      echo 'Connection Error: ' . $e->getMessage();
-    }
+//   // DB Connect
+//   public function connect() {
+//     $this->conn = null;
+//     try { 
+//       $this->conn = new PDO('sqlite:/home/toto/event_dev/mydatabase_dev.db');
+//       $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+//     } catch(PDOException $e) {
+//       echo 'Connection Error: ' . $e->getMessage();
+//     }
 
-    return $this->conn;
-  }
-}
+//     return $this->conn;
+//   }
+// }
 
 function show_tables() {
   include_once '/home/toto/event_dev/models/Event.php';

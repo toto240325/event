@@ -1,49 +1,30 @@
 <?php 
-  // Headers
-  header('Access-Control-Allow-Origin: *');
-  header('Content-Type: application/json');
-  header('Access-Control-Allow-Methods: event');
-  header('Access-Control-Allow-Headers: Access-Control-Allow-Headers,Content-Type,Access-Control-Allow-Methods, hostization, X-Requested-With');
+// to test : 
+// cd ~/event/api/event ; php create.php
 
-  include_once '../../config/Database.php';
-  include_once '../../models/Event.php';
-  include '../../utilities.php';
-  include '../../params.php';
+require_once "create_fct.php";
 
-  // Instantiate DB & connect
-  $database = new Database($params);
-  $db = $database->connect();
+// detect if we are call from apached or from command line
+$direct_call = ($argc != null);
 
-  // Instantiate blog event object
-  $event = new Event($db,$database->db_type);
+if ($direct_call) {
+  // echo "this is a call from command line\n";
+  // echo "There are $argc arguments\n";
+  // for ($i=0; $i < $argc; $i++) {
+  //   echo $argv[$i] . "\n";
+  // }
+  $input = '{
+    "text" : "test from direct php call (MyTest)",
+    "host" : "test host",
+    "type" : "test"
+  }';
   
-  // Get raw evented data
+} else {
   $input = file_get_contents("php://input");
-  //echo "input : " . $input . "\n";
-  $data = json_decode($input);
-  
+  // echo "this is a call from apache\n";
+  // echo "input: $input";
+}
 
-  // $data = json_decode('{
-  //   "text" : "backup of HP455G7",
-  //   "host" : "mypc3",
-  //   "type" : "sqlite test"
-  // }');
+create_fct($input, $direct_call);
 
-  $event->text = $data->text;
-  $event->type = $data->type;
-  $event->host = $data->host;
-  
-  // Create event
-  $dt = new DateTime("now", new DateTimeZone('Europe/Paris'));
-  $dt_string = $dt->format('Y/m/d H:i:s');
-
-  if($event->create()) {
-    echo json_encode(
-      array('message' => 'event created on '. $dt_string . '(' . $event->text . ')')
-    );
-  } else {
-    echo json_encode(
-      array('message' => 'event not created on '. $dt_string)
-    );
-  }
-
+?>
