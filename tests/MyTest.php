@@ -9,6 +9,7 @@ echo "current directory : " . getcwd() . "\n";
 include 'params.php';
 //include '../utils/log_event.php';
 
+
 function mylog($text) {
     echo $text . "\n";
 }
@@ -76,25 +77,28 @@ class MyTest extends \PHPUnit\Framework\TestCase {
     }
     
 
-    // public function testEventCreate() {
-    //     //test the create.php module (not the REST API !)   
-    //     //The data you want to send via POST (as a json string)
+    public function testEventCreate() {
+        //test the create.php module (not the REST API !)   
+        //The data you want to send via POST (as a json string)
 
-    //     $input = '{
-    //         "text" : "test from direct php call (MyTest)",
-    //         "host" : "test host",
-    //         "type" : "test"
-    //     }';
-    //     $direct_call = true;
-    //     $result = create_fct($input, $direct_call);     
-    //     // echo "result : \n";
-    //     // var_dump($result);
+        $input = '{
+            "text" : "test from direct php call (MyTest)",
+            "host" : "test host",
+            "type" : "test"
+        }';
+        $direct_call = true;
+        $result = create_fct($input, $direct_call);     
+        // echo "result : \n";
+        // var_dump($result);
 
-    //     $message = $result["message"]; 
-    //     $this->assertStringContainsString("event created on ",$message);
-    // }
+        $message = $result["message"]; 
+        $this->assertStringContainsString("event created on ",$message);
+        $id = $result["id"]; 
+        $this->assertGreaterThan(0,$id);
+        
+    }
 
-
+ 
     public function testEventAPICreate() {
         // curl -X POST -d "{\"text\" : \"test from phpunit\",\"host\" : \"test host\",\"type\" : \"sqlite test\"}"  event_server + "/api/event/create.php"    
         global $event_server;

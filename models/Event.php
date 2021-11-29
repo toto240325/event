@@ -253,9 +253,16 @@
       $stmt->bindParam(':type', $this->type);
 
       // Execute query
-      if($stmt->execute()) {        
-        $lastid = $this->conn->lastInsertId();
-        return $lastid;
+      if($stmt->execute()) {   
+        try {
+
+          $lastid = intval($this->conn->lastInsertId());
+          return $lastid;
+
+        } catch(Exception $e) {
+          // this should never occur as the last rowid is supposed to be a int anyway
+          throw new Exception("Value must be 1 or below");
+        }
       }
 
       // Print error if something goes wrong

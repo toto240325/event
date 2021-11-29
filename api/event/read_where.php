@@ -4,7 +4,7 @@
   // if "address already in use :::9003"
   // lsof -n -i -P | grep LISTEN
 
-  // cd /home/toto/event_dev/api/event ; php read_where.php
+  // cd /home/toto/event/api/event ; php read_where.php
 
   // Headers
   header('Access-Control-Allow-Origin: *');
@@ -73,7 +73,8 @@
       );
 
       // Push to "data"
-      array_push($events_arr, $event_item);
+      //array_push($events_arr, $event_item);
+      array_unshift($events_arr, $event_item);
       // array_push($events_arr['data'], $event_item);
     }
 

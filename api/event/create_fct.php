@@ -3,18 +3,25 @@
 function create_fct($input, $direct_call) {
 
   // Headers
-  if (!$direct_call) {
-
+  if ($direct_call) {
+    $root_folder = "/home/toto/event";
+  } else {
+    $root_folder = "/var/www/event";
     header('Access-Control-Allow-Origin: *');
     header('Content-Type: application/json');
     header('Access-Control-Allow-Methods: event');
     header('Access-Control-Allow-Headers: Access-Control-Allow-Headers,Content-Type,Access-Control-Allow-Methods, hostization, X-Requested-With');
   }
 
-  include_once '../../config/Database.php';
-  include_once '../../models/Event.php';
-  include '../../utilities.php';
-  include '../../params.php';
+  include_once "$root_folder/config/Database.php";
+  include_once "$root_folder/models/Event.php";
+  include "$root_folder/utilities.php";
+  include "$root_folder/params.php";
+
+  // include_once '../../config/Database.php';
+  // include_once '../../models/Event.php';
+  // include '../../utilities.php';
+  // include '../../params.php';
 
   // Instantiate DB & connect
   $database = new Database($params);
@@ -51,22 +58,23 @@ function create_fct($input, $direct_call) {
     // more : https://www.sqlite.org/rowidtable.html
 
     $msg = 'event created on '. $dt_string . '(' . $event->text . ')';
-    echo json_encode(
-      array(
-        'message' => $msg,
-        'id' => $lastid,
-        'error' => ''
-      )
-    );
+    $error = "";
   } else {
     $msg = 'event not created on '. $dt_string;
-    echo json_encode(
-      array(
-        'message' => $msg,
-        'error' => 'error !!!!'
-      )
-    );
-  }    
+    $error = 'event not created on '. $dt_string;
+  }
+
+  $result = array(
+    'id' => $lastid,
+    'message' => $msg,
+    'error' => $error
+  );
+
+  if ($direct_call){
+    return $result;
+  } else {
+    echo json_encode($result);
+  }
 }
 
 ?>
