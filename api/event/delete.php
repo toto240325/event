@@ -2,11 +2,13 @@
 // to test : 
 // cd ~/event/api/event ; php delete.php
 
-// detect if we are call from apached or from command line
-$direct_call = ($argc != null);
+// detect is we are in development mode (module are in ~) or production mode (modules are in /var/www/)
+$dir = dirname(__FILE__);
+$dir_arr = explode("/",$dir);
+$dev_mode = ($dir_arr[1] == "home");
+//echo "dev_mode : $dev_mode";
 
-
-if ($direct_call) {
+if ($dev_mode) {
   $root_folder = "/home/toto/event";
 } else {
   $root_folder = "/var/www/event";
@@ -14,10 +16,6 @@ if ($direct_call) {
 
 require_once "$root_folder/api/event/delete_fct.php";
 require_once "$root_folder/api/event/create_fct.php";
-
-// detect if we are call from apached or from command line
-$direct_call = ($argc != null);
-
 
 
 function create_test_event() {
@@ -32,6 +30,9 @@ function create_test_event() {
   return $id;
 
 }
+
+// detect if we are call from apache or from command line
+$direct_call = ($argc != null);
 
 if ($direct_call) {
   // echo "this is a call from command line\n";
@@ -52,5 +53,7 @@ if ($direct_call) {
 }
 
 $result = delete_fct($input, $direct_call);
+
+echo json_encode($result);
 
 ?>

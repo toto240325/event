@@ -3,10 +3,22 @@
 // cd ~/event ; php vendor/bin/phpunit tests/MyTest.php --stderr --testdox # --stderr to avoid errors to interfere ??? --testdox : better output ?
 // ./vendor/bin/phpunit --testdox
 
-require "api/event/create_fct.php";
+// detect is we are in development mode (module are in ~) or production mode (modules are in /var/www/)
+$dir = dirname(__FILE__);
+$dir_arr = explode("/",$dir);
+$dev_mode = ($dir_arr[1] == "home");
+//echo "dev_mode : $dev_mode";
+
+if ($dev_mode) {
+  $root_folder = "/home/toto/event";
+} else {
+  $root_folder = "/var/www/event";
+}
+
+require_once "$root_folder/api/event/create_fct.php";
+include "$root_folder/params.php";
 
 echo "current directory : " . getcwd() . "\n";
-include 'params.php';
 //include '../utils/log_event.php';
 
 
@@ -16,9 +28,9 @@ function mylog($text) {
 
 
 function log_event($text,$type) {
-    # curl "http://192.168.0.52/event_dev/api/event/read_where.php?type=temperature&limit=3"
+    # curl "http://192.168.0.52/event/api/event/read_where.php?type=temperature&nb=3"
     global $event_server;
-    $output = myCurl($event_server . "/api/event/readWhere.php?type=temperature&limit=4");
+    $output = myCurl($event_server . "/api/event/readWhere.php?type=temperature&nb=4");
     $result = json_decode($output, true);
     return $result;
 }
@@ -48,7 +60,7 @@ function post2($url,$fields_string) {
     return $result = curl_exec($ch);
 }
 
-function post($url,$fields_string) {
+function post($url, $fields_string) {
     $sURL = $url;
     $sPD = $fields_string;
     $aHTTP = array(
@@ -92,7 +104,7 @@ class MyTest extends \PHPUnit\Framework\TestCase {
         // var_dump($result);
 
         $message = $result["message"]; 
-        $this->assertStringContainsString("event created on ",$message);
+        $this->assertStringContainsString("created on ",$message);
         $id = $result["id"]; 
         $this->assertGreaterThan(0,$id);
         
@@ -127,12 +139,12 @@ class MyTest extends \PHPUnit\Framework\TestCase {
         // var_dump($result);
 
         $message = $result["message"]; 
-        $this->assertStringContainsString("event created on ",$message);
+        $this->assertStringContainsString("created on ",$message);
     }
 
 
     // public function testEventAPIRead() {
-    // # curl "http://192.168.0.52/event_dev/api/event/read.php"
+    // # curl "http://192.168.0.52/event/api/event/read.php"
     //     global $event_server;
     //     $output = myCurl($event_server . "/api/event/read.php");
     //     $result = json_decode($output, true);
@@ -150,49 +162,52 @@ class MyTest extends \PHPUnit\Framework\TestCase {
     //     }
     // }
     
-    # curl "http://192.168.0.52/event_dev/api/event/read_single.php?id=1"
-    public function testEventAPIReadSingle() {
-        global $event_server;
-        $output = myCurl($event_server . "/api/event/read_single.php?id=1");
-        $result = json_decode($output, true);
-        $error = $result["error"];
-        $this->assertEquals("",$error);
-        if ($result["error"] =="") {
-            $t = $result["id"];
-            $this->assertStringContainsString("1",$t);
-        }
-    }
+    // # curl "http://192.168.0.52/event/api/event/read_single.php?id=1"
+    // public function testEventAPIReadSingle() {
+    //     global $event_server;
+    //     $output = myCurl($event_server . "/api/event/read_single.php?id=1");
+    //     $result = json_decode($output, true);
+    //     $error = $result["error"];
+    //     $this->assertEquals("",$error);
+    //     if ($result["error"] =="") {
+    //         $t = $result["id"];
+    //         $this->assertStringContainsString("1",$t);
+    //     }
+    // }
 
-    # curl "http://192.168.0.52/event_dev/api/event/read_last.php?type=temperature"
-    public function testEventAPIReadLast() {
-        global $event_server;
-        $output = myCurl($event_server . "/api/event/read_last.php?type=temperature");
-        $result = json_decode($output, true);
-        $error = $result["error"];
-        $this->assertEquals("",$error);
-        if ($result["error"] =="") {
-            $t = $result["type"];
-            $this->assertStringContainsString("temperature",$t);
-        }
-    }
+    // # curl "http://192.168.0.52/event/api/event/read_last.php?type=temperature"
+    // public function testEventAPIReadLast() {
+    //     global $event_server;
+    //     $output = myCurl($event_server . "/api/event/read_last.php?type=temperature");
+    //     $result = json_decode($output, true);
+    //     $error = $result["error"];
+    //     $this->assertEquals("",$error);
+    //     if ($result["error"] =="") {
+    //         $t = $result["type"];
+    //         $this->assertStringContainsString("temperature",$t);
+    //     }
+    // }
 
     public function testEventAPIReadWhere() {
-        # curl "http://192.168.0.52/event_dev/api/event/read_where.php?type=temperature&limit=3"
+        # curl "http://192.168.0.52/event/api/event/read_where.php?type=temperature&nb=3"
         global $event_server;
-        $output = myCurl($event_server . "/api/event/read_where.php?type=temperature&limit=4");
+        $output = myCurl($event_server . "/api/event/read_where.php?type=temperature&nb=2");
         $result = json_decode($output, true);
         $num = count($result);
         //echo "number of records found: " . $num;
-        $this->assertEquals(4,$num);                
+        $this->assertEquals(2,$num);                
     }       
 
     public function testLogEvent() {
-        # curl "http://192.168.0.52/event_dev/api/event/read_where.php?type=temperature&limit=3"
+        # curl "http://192.168.0.52/event/api/event/read_where.php?type=temperature&nb=3"
         global $event_server;
         $result = log_event("test","mynewtype");
-        $output = myCurl($event_server . "/api/event/read_where.php?limit=1");
+        $output = myCurl($event_server . "/api/event/read_where.php?nb=1");
         $result = json_decode($output, true);
-        $num = count($result);
+        $error = $result["error"];
+        $this->assertSame("",$error);
+        $events = $result["events"];
+        $num = count($events);
         //echo "number of records found: " . $num;
         $this->assertGreaterThanOrEqual(1,$num);
         if ($num > 0) {

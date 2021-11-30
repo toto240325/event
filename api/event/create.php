@@ -1,10 +1,25 @@
 <?php 
 // to test : 
+// F5 -> start "listen for Xdebug"
+// if "address already in use :::9003"
+// lsof -n -i -P | grep LISTEN
 // cd ~/event/api/event ; php create.php
 
-require_once "create_fct.php";
+// detect is we are in development mode (module are in ~) or production mode (modules are in /var/www/)
+$dir = dirname(__FILE__);
+$dir_arr = explode("/",$dir);
+$dev_mode = ($dir_arr[1] == "home");
+//echo "dev_mode : $dev_mode";
 
-// detect if we are call from apached or from command line
+if ($dev_mode) {
+  $root_folder = "/home/toto/event";
+} else {
+  $root_folder = "/var/www/event";
+}
+
+require_once "$root_folder/api/event/create_fct.php";
+
+// detect if we are call from apache or from command line
 $direct_call = ($argc != null);
 
 if ($direct_call) {
@@ -25,6 +40,7 @@ if ($direct_call) {
   // echo "input: $input";
 }
 
-create_fct($input, $direct_call);
+$result = create_fct($input, $direct_call);     
+echo json_encode($result);
 
 ?>

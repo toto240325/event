@@ -45,8 +45,8 @@
       return $stmt;
     }
 
-    public function read_where($type,$limit) {
-      // read the last $limit events (sorted chronologically) of type $type (if provided)
+    public function read_where($type,$nb) {
+      // read the last $nb events (sorted chronologically) of type $type (if provided)
 
       // Create query
       $query = 'SELECT e.id, e.text, e.host, e.type, e.time ' .
@@ -54,7 +54,7 @@
         ($type == '' ? '' : 'WHERE e.type = "' . $type . '"') .
         'ORDER BY ' .
         '  e.time DESC ' .
-        ($limit == 0 ? '' : 'LIMIT "' . $limit . '"')
+        ($nb == 0 ? '' : 'LIMIT "' . $nb . '"')
         ;
       
       // Prepare statement
@@ -94,109 +94,109 @@
 // }
 
 
-// Get Single event
-    public function read_single() {
-      // Create query
-      $query = 'SELECT e.id, e.text, e.host, e.type, e.time
-          FROM ' . $this->table . ' e
-          WHERE
-            e.id = ?
-          LIMIT 0,1';
+// // Get Single event
+//     public function read_single() {
+//       // Create query
+//       $query = 'SELECT e.id, e.text, e.host, e.type, e.time
+//           FROM ' . $this->table . ' e
+//           WHERE
+//             e.id = ?
+//           LIMIT 0,1';
 
-      // Prepare statement
-      $stmt = $this->conn->prepare($query);
+//       // Prepare statement
+//       $stmt = $this->conn->prepare($query);
 
-      // Bind ID
-      $stmt->bindParam(1, $this->id);
+//       // Bind ID
+//       $stmt->bindParam(1, $this->id);
 
-      // Execute query
-      $stmt->execute();
+//       // Execute query
+//       $stmt->execute();
 
-      # check if there is at least one record
-      if ($this->db_type == "mysql") {
-        // Get row count
-        $num = $stmt->rowCount();
-      } elseif ($this->db_type == "sqlite") {
-        // Get row count this works for mysql but doesn't work well for sqlite
-        $item = $stmt->fetchAll(PDO::FETCH_ASSOC); 
-        if($item && count($item)){ 
-          $num = count($item);
-          //reset the rows pointer to the beginning
-          $stmt->execute();
-        } else {
-          $num = 0;
-        }
-      } else {
-        die("unknown db_type !");
-      }
+//       # check if there is at least one record
+//       if ($this->db_type == "mysql") {
+//         // Get row count
+//         $num = $stmt->rowCount();
+//       } elseif ($this->db_type == "sqlite") {
+//         // Get row count this works for mysql but doesn't work well for sqlite
+//         $item = $stmt->fetchAll(PDO::FETCH_ASSOC); 
+//         if($item && count($item)){ 
+//           $num = count($item);
+//           //reset the rows pointer to the beginning
+//           $stmt->execute();
+//         } else {
+//           $num = 0;
+//         }
+//       } else {
+//         die("unknown db_type !");
+//       }
     
-      if ($num > 0) {
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+//       if ($num > 0) {
+//         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // Set properties
-        $this->id = $row['id'];
-        $this->text = $row['text'];
-        $this->host = $row['host'];
-        $this->type = $row['type'];
-        $this->time = $row['time'];
-      }
-      else {
-        $this->error = "no record found";
-      }
+//         // Set properties
+//         $this->id = $row['id'];
+//         $this->text = $row['text'];
+//         $this->host = $row['host'];
+//         $this->type = $row['type'];
+//         $this->time = $row['time'];
+//       }
+//       else {
+//         $this->error = "no record found";
+//       }
       
-}
+// }
 
-// Read last event of a given type
-    public function read_last() {
-      // Create query
-      $query = 'SELECT e.id, e.text, e.host, e.type, e.time
-          FROM ' . $this->table . ' e
-          WHERE
-            e.type = ?
-          ORDER BY e.time desc
-          LIMIT 0,1';
+// // Read last event of a given type
+//     public function read_last() {
+//       // Create query
+//       $query = 'SELECT e.id, e.text, e.host, e.type, e.time
+//           FROM ' . $this->table . ' e
+//           WHERE
+//             e.type = ?
+//           ORDER BY e.time desc
+//           LIMIT 0,1';
 
-      // Prepare statement
-      $stmt = $this->conn->prepare($query);
+//       // Prepare statement
+//       $stmt = $this->conn->prepare($query);
 
-      // Bind ID
-      $stmt->bindParam(1, $this->type);
+//       // Bind ID
+//       $stmt->bindParam(1, $this->type);
 
-      // Execute query
-      $stmt->execute();
+//       // Execute query
+//       $stmt->execute();
 
-      # check if there is at least one record
-      if ($this->db_type == "mysql") {
-        // Get row count
-        $num = $stmt->rowCount();
-      } elseif ($this->db_type == "sqlite") {
-        // Get row count this works for mysql but doesn't work well for sqlite
-        $item = $stmt->fetchAll(PDO::FETCH_ASSOC); 
-        if($item && count($item)){ 
-          $num = count($item);
-          //reset the rows pointer to the beginning
-          $stmt->execute();
-        } else {
-          $num = 0;
-        }
-      } else {
-        die("unknown db_type !");
-      }
+//       # check if there is at least one record
+//       if ($this->db_type == "mysql") {
+//         // Get row count
+//         $num = $stmt->rowCount();
+//       } elseif ($this->db_type == "sqlite") {
+//         // Get row count this works for mysql but doesn't work well for sqlite
+//         $item = $stmt->fetchAll(PDO::FETCH_ASSOC); 
+//         if($item && count($item)){ 
+//           $num = count($item);
+//           //reset the rows pointer to the beginning
+//           $stmt->execute();
+//         } else {
+//           $num = 0;
+//         }
+//       } else {
+//         die("unknown db_type !");
+//       }
     
-      if ($num > 0) {
-        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+//       if ($num > 0) {
+//         $row = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        // Set properties
-        $this->id = $row['id'];
-        $this->text = $row['text'];
-        $this->host = $row['host'];
-        $this->type = $row['type'];
-        $this->time = $row['time'];
-      }
-      else {
-        $this->error = "no record found";
-      }
-    }
+//         // Set properties
+//         $this->id = $row['id'];
+//         $this->text = $row['text'];
+//         $this->host = $row['host'];
+//         $this->type = $row['type'];
+//         $this->time = $row['time'];
+//       }
+//       else {
+//         $this->error = "no record found";
+//       }
+//     }
 
 
     // // Get rowid of the last row created within this DB connection
@@ -230,11 +230,8 @@
   //       return true;
   // }
 
-
-
     // Create event
     public function create() {
-    
       // Create query
       //$query = 'INSERT INTO ' . $this->table . ' SET text = :text, host = :host, type = :type';
       $query = 'INSERT INTO ' . $this->table . ' (text, host, type) values (:text, :host, :type)';
@@ -251,7 +248,6 @@
       $stmt->bindParam(':text', $this->text);
       $stmt->bindParam(':host', $this->host);
       $stmt->bindParam(':type', $this->type);
-
       // Execute query
       if($stmt->execute()) {   
         try {

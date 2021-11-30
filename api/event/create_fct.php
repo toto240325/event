@@ -2,15 +2,16 @@
 
 function create_fct($input, $direct_call) {
 
-  // Headers
-  if ($direct_call) {
+  // detect is we are in development mode (module are in ~) or production mode (modules are in /var/www/)
+  $dir = dirname(__FILE__);
+  $dir_arr = explode("/",$dir);
+  $dev_mode = ($dir_arr[1] == "home");
+  //echo "dev_mode : $dev_mode";
+
+  if ($dev_mode) {
     $root_folder = "/home/toto/event";
   } else {
     $root_folder = "/var/www/event";
-    header('Access-Control-Allow-Origin: *');
-    header('Content-Type: application/json');
-    header('Access-Control-Allow-Methods: event');
-    header('Access-Control-Allow-Headers: Access-Control-Allow-Headers,Content-Type,Access-Control-Allow-Methods, hostization, X-Requested-With');
   }
 
   include_once "$root_folder/config/Database.php";
@@ -18,10 +19,13 @@ function create_fct($input, $direct_call) {
   include "$root_folder/utilities.php";
   include "$root_folder/params.php";
 
-  // include_once '../../config/Database.php';
-  // include_once '../../models/Event.php';
-  // include '../../utilities.php';
-  // include '../../params.php';
+  if (!$direct_call) {
+    // Headers  
+    header('Access-Control-Allow-Origin: *');
+    header('Content-Type: application/json');
+    header('Access-Control-Allow-Methods: event');
+    header('Access-Control-Allow-Headers: Access-Control-Allow-Headers,Content-Type,Access-Control-Allow-Methods, hostization, X-Requested-With');
+  }
 
   // Instantiate DB & connect
   $database = new Database($params);
@@ -31,17 +35,9 @@ function create_fct($input, $direct_call) {
   // Instantiate blog event object
   $event = new Event($db,$database->db_type);
   
-
   //echo "input : " . $input . "\n";
   $data = json_decode($input);
   
-
-  // $data = json_decode('{
-  //   "text" : "backup of HP455G7",
-  //   "host" : "mypc3",
-  //   "type" : "sqlite test"
-  // }');
-
   $event->text = $data->text;
   $event->type = $data->type;
   $event->host = $data->host;
@@ -57,7 +53,7 @@ function create_fct($input, $direct_call) {
     //given that for the events table id is the "integer primary key", rowid = id
     // more : https://www.sqlite.org/rowidtable.html
 
-    $msg = 'event created on '. $dt_string . '(' . $event->text . ')';
+    $msg = "event $lastid created on $dt_string ($event->text)";
     $error = "";
   } else {
     $msg = 'event not created on '. $dt_string;
@@ -70,11 +66,7 @@ function create_fct($input, $direct_call) {
     'error' => $error
   );
 
-  if ($direct_call){
-    return $result;
-  } else {
-    echo json_encode($result);
-  }
+  return $result;
 }
 
 ?>
