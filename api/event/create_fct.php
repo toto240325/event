@@ -16,7 +16,7 @@ function create_fct($input, $direct_call) {
 
   include_once "$root_folder/config/Database.php";
   include_once "$root_folder/models/Event.php";
-  include "$root_folder/utilities.php";
+  include_once "$root_folder/utilities.php";
   include "$root_folder/params.php";
 
   if (!$direct_call) {
@@ -39,7 +39,7 @@ function create_fct($input, $direct_call) {
   $data = json_decode($input);
   
   $event->text = $data->text;
-  $event->type = $data->type;
+  $event->categ = $data->categ;
   $event->host = $data->host;
   
   // Create event and get the id of the row created

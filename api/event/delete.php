@@ -22,7 +22,7 @@ function create_test_event() {
   $input = '{
     "text" : "dummy event created to be deleted just after for testing purposes",
     "host" : "test host",
-    "type" : "test dummy"
+    "categ" : "test dummy"
   }';
   $direct_call = true;
   $result = create_fct($input, $direct_call); 
@@ -48,12 +48,11 @@ if ($direct_call) {
   }';  
 } else {
   $input = file_get_contents("php://input");
-  // echo "this is a call from apache\n";
-  // echo "input: $input";
+  echo "this is a call from apache\n";
+  echo "input: $input";
 }
 
-$result = delete_fct($input, $direct_call);
-
-echo json_encode($result);
+// $result = delete_fct($input, $direct_call);
+// echo json_encode($result);
 
 ?>

@@ -31,7 +31,7 @@ if ($direct_call) {
   $input = '{
     "text" : "test from direct php call (MyTest)",
     "host" : "test host",
-    "type" : "test"
+    "categ" : "test"
   }';
   
 } else {

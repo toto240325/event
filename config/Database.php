@@ -67,7 +67,7 @@ class Database {
 //   $database = new Database_sqlite();
 //   $db = $database->connect();
 
-//   $result = $db->query("SELECT name FROM sqlite_master WHERE type='table';");
+//   $result = $db->query("SELECT name FROM sqlite_master WHERE categ='table';");
 
 //   echo "Tables in this db:\n";
 //   // Loop thru all data from messages table 

@@ -27,11 +27,24 @@ function mylog($text) {
 }
 
 
-function log_event($text,$type) {
-    # curl "http://192.168.0.52/event/api/event/read_where.php?type=temperature&nb=3"
+function log_event($text,$categ) {
+    # curl "http://192.168.0.52/event/api/event/read_where.php?categ=temperature&nb=3"
     global $event_server;
-    $output = myCurl($event_server . "/api/event/readWhere.php?type=temperature&nb=4");
-    $result = json_decode($output, true);
+
+    // $text = str_replace(' ', '+', $text); // Replaces all spaces with +.
+    // $text = preg_replace('/[^A-Za-z0-9\-+]/', '', $text);
+    // $categ = str_replace(' ', '+', $categ); // Replaces all spaces with +.
+    // $categ = preg_replace('/[^A-Za-z0-9\-]/', '', $categ);
+
+    $host = gethostname();
+
+    $input = '{
+        "text" : "' . $text . '",
+        "host" : "' . $host . '",
+        "categ" : "' . $categ . '"
+      }';      
+    $direct_call = true;
+    $result = create_fct($input, $direct_call);     
     return $result;
 }
 
@@ -96,7 +109,7 @@ class MyTest extends \PHPUnit\Framework\TestCase {
         $input = '{
             "text" : "test from direct php call (MyTest)",
             "host" : "test host",
-            "type" : "test"
+            "categ" : "test"
         }';
         $direct_call = true;
         $result = create_fct($input, $direct_call);     
@@ -112,15 +125,15 @@ class MyTest extends \PHPUnit\Framework\TestCase {
 
  
     public function testEventAPICreate() {
-        // curl -X POST -d "{\"text\" : \"test from phpunit\",\"host\" : \"test host\",\"type\" : \"sqlite test\"}"  event_server + "/api/event/create.php"    
+        // curl -X POST -d "{\"text\" : \"test from phpunit\",\"host\" : \"test host\",\"categ\" : \"sqlite test\"}"  event_server + "/api/event/create.php"    
         global $event_server;
         $url = $event_server . "/api/event/create.php";
 
-        // //The data you want to send via POST (seperated http query fields like : text=text1&host=hostABC&type=this+is+mytype)
+        // //The data you want to send via POST (seperated http query fields like : text=text1&host=hostABC&categ=this+is+mytype)
         // $fields = [
         //     'text' => 'text sent via POST',
         //     'host' => 'my host',
-        //     'type' => 'posted'
+        //     'categ' => 'posted'
         // ];
     
         // //url-ify the data for the POST
@@ -130,7 +143,7 @@ class MyTest extends \PHPUnit\Framework\TestCase {
         $fields_string = '{
             "text" : "test from phpunit via apache",
             "host" : "test host",
-            "type" : "test"
+            "categ" : "test"
         }';  
     
         $json = post($url,$fields_string);
@@ -175,34 +188,48 @@ class MyTest extends \PHPUnit\Framework\TestCase {
     //     }
     // }
 
-    // # curl "http://192.168.0.52/event/api/event/read_last.php?type=temperature"
+    // # curl "http://192.168.0.52/event/api/event/read_last.php?categ=temperature"
     // public function testEventAPIReadLast() {
     //     global $event_server;
-    //     $output = myCurl($event_server . "/api/event/read_last.php?type=temperature");
+    //     $output = myCurl($event_server . "/api/event/read_last.php?categ=temperature");
     //     $result = json_decode($output, true);
     //     $error = $result["error"];
     //     $this->assertEquals("",$error);
     //     if ($result["error"] =="") {
-    //         $t = $result["type"];
+    //         $t = $result["categ"];
     //         $this->assertStringContainsString("temperature",$t);
     //     }
     // }
 
     public function testEventAPIReadWhere() {
-        # curl "http://192.168.0.52/event/api/event/read_where.php?type=temperature&nb=3"
+        # curl "http://192.168.0.52/event/api/event/read_where.php?categ=temperature&nb=3"
         global $event_server;
-        $output = myCurl($event_server . "/api/event/read_where.php?type=temperature&nb=2");
+        $output = myCurl($event_server . "/api/event/read_where.php?categ=temperature&nb=2");
         $result = json_decode($output, true);
         $num = count($result);
         //echo "number of records found: " . $num;
         $this->assertEquals(2,$num);                
     }       
 
+
+
+
+
+
+
+
     public function testLogEvent() {
-        # curl "http://192.168.0.52/event/api/event/read_where.php?type=temperature&nb=3"
+        # curl "http://192.168.0.52/event/api/event/read_where.php?categ=temperature&nb=3"
         global $event_server;
-        $result = log_event("test","mynewtype");
+
+
+        // create a dummy test record
+        $result = log_event("test 123456 log from MyTest.php","mynewtype");
+        
+        // read the last created event
         $output = myCurl($event_server . "/api/event/read_where.php?nb=1");
+        
+        // check the event just read corresponds to the event created just before
         $result = json_decode($output, true);
         $error = $result["error"];
         $this->assertSame("",$error);
@@ -211,12 +238,12 @@ class MyTest extends \PHPUnit\Framework\TestCase {
         //echo "number of records found: " . $num;
         $this->assertGreaterThanOrEqual(1,$num);
         if ($num > 0) {
-            $rec = $result[0];
+            $event = $events[0];
             // echo "rec : \n";
             // var_dump($rec);
             // echo "\n";
-            $t = $rec["text"];
-            $this->assertStringContainsString("test from phpunit",$t);
+            $text = $event["text"];
+            $this->assertSame("test 123456 log from MyTest.php",$text);
             
         }
     }

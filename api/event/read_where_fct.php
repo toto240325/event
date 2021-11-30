@@ -16,7 +16,7 @@ function read_where_fct($input, $direct_call) {
 
     include_once "$root_folder/config/Database.php";
     include_once "$root_folder/models/Event.php";
-    include "$root_folder/utilities.php";
+    include_once "$root_folder/utilities.php";
     include "$root_folder/params.php";
 
     if (!$direct_call) {
@@ -32,9 +32,11 @@ function read_where_fct($input, $direct_call) {
     // Instantiate event object
     $event = new Event($db,$database->db_type);
 
-
     // Get parameters
     $data = json_decode($input);
+    // echo "data : ";
+    // var_dump($data);
+
 
     // Set ID to update
     $categ = $data->categ;
@@ -73,7 +75,7 @@ function read_where_fct($input, $direct_call) {
                 'id' => $id,
                 'text' => $text,
                 'host' => $host,
-                'type' => $type,
+                'categ' => $categ,
                 'time' => convert_UTC_to_CET($time)
             );
 

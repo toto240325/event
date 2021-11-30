@@ -9,7 +9,7 @@
     //   `id` int(11) NOT NULL AUTO_INCREMENT,
     //   `text` varchar(255) NOT NULL,
     //   `host` varchar(255) NOT NULL,
-    //   `type` varchar(255) NOT NULL,
+    //   `categ` varchar(255) NOT NULL,
     //   `time` datetime NOT NULL DEFAULT CURRENT_TIMESTAMP,
     //   PRIMARY KEY (`id`)
     // );
@@ -17,7 +17,7 @@
     // event Properties
     public $id;
     public $host;
-    public $type;
+    public $categ;
     public $text;
     public $time;
     public $error = "";
@@ -31,7 +31,7 @@
     // Get events
     public function read() {
       // Create query
-      $query = 'SELECT e.id, e.text, e.host, e.type, e.time
+      $query = 'SELECT e.id, e.text, e.host, e.categ, e.time
         FROM ' . $this->table . ' e
         ORDER BY
           e.time DESC';
@@ -45,15 +45,15 @@
       return $stmt;
     }
 
-    public function read_where($type,$nb) {
-      // read the last $nb events (sorted chronologically) of type $type (if provided)
+    public function read_where($categ,$nb) {
+      // read the last $nb events (sorted chronologically) of categ $categ (if provided)
 
       // Create query
-      $query = 'SELECT e.id, e.text, e.host, e.type, e.time ' .
+      $query = 'SELECT e.id, e.text, e.host, e.categ, e.time ' .
         'FROM ' . $this->table . ' e ' .
-        ($type == '' ? '' : 'WHERE e.type = "' . $type . '"') .
+        ($categ == '' ? '' : 'WHERE e.categ = "' . $categ . '"') .
         'ORDER BY ' .
-        '  e.time DESC ' .
+        '  e.time DESC, e.id DESC ' .
         ($nb == 0 ? '' : 'LIMIT "' . $nb . '"')
         ;
       
@@ -97,7 +97,7 @@
 // // Get Single event
 //     public function read_single() {
 //       // Create query
-//       $query = 'SELECT e.id, e.text, e.host, e.type, e.time
+//       $query = 'SELECT e.id, e.text, e.host, e.categ, e.time
 //           FROM ' . $this->table . ' e
 //           WHERE
 //             e.id = ?
@@ -137,7 +137,7 @@
 //         $this->id = $row['id'];
 //         $this->text = $row['text'];
 //         $this->host = $row['host'];
-//         $this->type = $row['type'];
+//         $this->categ = $row['categ'];
 //         $this->time = $row['time'];
 //       }
 //       else {
@@ -146,13 +146,13 @@
       
 // }
 
-// // Read last event of a given type
+// // Read last event of a given categ
 //     public function read_last() {
 //       // Create query
-//       $query = 'SELECT e.id, e.text, e.host, e.type, e.time
+//       $query = 'SELECT e.id, e.text, e.host, e.categ, e.time
 //           FROM ' . $this->table . ' e
 //           WHERE
-//             e.type = ?
+//             e.categ = ?
 //           ORDER BY e.time desc
 //           LIMIT 0,1';
 
@@ -160,7 +160,7 @@
 //       $stmt = $this->conn->prepare($query);
 
 //       // Bind ID
-//       $stmt->bindParam(1, $this->type);
+//       $stmt->bindParam(1, $this->categ);
 
 //       // Execute query
 //       $stmt->execute();
@@ -190,7 +190,7 @@
 //         $this->id = $row['id'];
 //         $this->text = $row['text'];
 //         $this->host = $row['host'];
-//         $this->type = $row['type'];
+//         $this->categ = $row['categ'];
 //         $this->time = $row['time'];
 //       }
 //       else {
@@ -233,8 +233,8 @@
     // Create event
     public function create() {
       // Create query
-      //$query = 'INSERT INTO ' . $this->table . ' SET text = :text, host = :host, type = :type';
-      $query = 'INSERT INTO ' . $this->table . ' (text, host, type) values (:text, :host, :type)';
+      //$query = 'INSERT INTO ' . $this->table . ' SET text = :text, host = :host, categ = :categ';
+      $query = 'INSERT INTO ' . $this->table . ' (text, host, categ) values (:text, :host, :categ)';
 
       // Prepare statement
       $stmt = $this->conn->prepare($query);
@@ -242,12 +242,12 @@
       // Clean data
       $this->text = htmlspecialchars(strip_tags($this->text));
       $this->host = htmlspecialchars(strip_tags($this->host));
-      $this->type = htmlspecialchars(strip_tags($this->type));
+      $this->categ = htmlspecialchars(strip_tags($this->categ));
 
       // Bind data
       $stmt->bindParam(':text', $this->text);
       $stmt->bindParam(':host', $this->host);
-      $stmt->bindParam(':type', $this->type);
+      $stmt->bindParam(':categ', $this->categ);
       // Execute query
       if($stmt->execute()) {   
         try {
@@ -271,7 +271,7 @@
     public function update() {
           // Create query
           $query = 'UPDATE ' . $this->table . '
-            SET text = :text, host = :host, type = :type
+            SET text = :text, host = :host, categ = :categ
             WHERE id = :id';
 
           // Prepare statement
@@ -280,13 +280,13 @@
           // Clean data
           $this->text = htmlspecialchars(strip_tags($this->text));
           $this->host = htmlspecialchars(strip_tags($this->host));
-          $this->type = htmlspecialchars(strip_tags($this->type));
+          $this->categ = htmlspecialchars(strip_tags($this->categ));
           $this->id = htmlspecialchars(strip_tags($this->id));
 
           // Bind data
           $stmt->bindParam(':text', $this->text);
           $stmt->bindParam(':host', $this->host);
-          $stmt->bindParam(':type', $this->type);
+          $stmt->bindParam(':categ', $this->categ);
           $stmt->bindParam(':id', $this->id);
 
           // Execute query

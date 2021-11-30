@@ -33,15 +33,15 @@ if ($direct_call) {
     "nb"  : 2
   }';
 } else {
-
-
-  $input = file_get_contents("php://input");
-  echo "not direct call ! $input";
-  // echo "this is a call from apache\n";
-  // echo "input: $input";
+    $categ = isset($_GET['categ']) ? $_GET['categ'] : "";
+    $nb = isset($_GET['nb']) ? $_GET['nb'] : 0;
+    
+    $input = '{
+      "categ" : "' . $categ . '",
+      "nb"  : ' . $nb . '
+    }';
+  
 }
-
-// echo "input2 : $input";
 
 $result = read_where_fct($input, $direct_call);
 echo json_encode($result);

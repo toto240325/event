@@ -19,7 +19,7 @@ class TestLogEvent(unittest.TestCase):
     """
 
     def test_log_event(self):
-        result_json = log_event("text","type")
+        result_json = log_event("text","categ")
         result = json.loads(result_json)
         message = result['message']
         trimmed_result=message[:10]
@@ -28,11 +28,11 @@ class TestLogEvent(unittest.TestCase):
    
     def test_for_list_as_text(self):
         with self.assertRaises(TypeError):
-            log_event([], "type")
+            log_event([], "categ")
 
     def test_for_number_as_text(self):
         with self.assertRaises(TypeError):
-            log_event(6, "type")
+            log_event(6, "categ")
     
 
 if __name__ == '__main__':
