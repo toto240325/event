@@ -39,15 +39,18 @@ function delete_fct($input, $direct_call) {
     $data = json_decode($input);
 
     // Set ID to update
+    $data = json_decode($input);
+  
     $event->id = $data->id;
+    // echo "test !!! ". $id;
 
 
     // Delete event
     if($event->delete()) {
-        $msg = "event $event->id deleted";
+        $msg = "event deleted : $event->id";
         $error = '';
     } else {
-        $msg = "event $event->id not deleted";
+        $msg = "event not deleted : $event->id";
         $error = 'error event not deleted';
     }
 
