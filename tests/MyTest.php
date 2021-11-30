@@ -18,7 +18,7 @@ if ($dev_mode) {
 require_once "$root_folder/api/event/create_fct.php";
 include "$root_folder/params.php";
 
-echo "current directory : " . getcwd() . "\n";
+//echo "current directory : " . getcwd() . "\n";
 //include '../utils/log_event.php';
 
 
@@ -43,7 +43,10 @@ function log_event($text,$categ) {
         "host" : "' . $host . '",
         "categ" : "' . $categ . '"
       }';      
-    $direct_call = true;
+    
+
+    $direct_call = ($event_server == "http://localhost/event");
+    
     $result = create_fct($input, $direct_call);     
     return $result;
 }
@@ -243,6 +246,9 @@ class MyTest extends \PHPUnit\Framework\TestCase {
             // var_dump($rec);
             // echo "\n";
             $text = $event["text"];
+            $host = $event["host"];
+            $time = $event["time"];
+            echo "test : $text - time : $time \n";
             $this->assertSame("test 123456 log from MyTest.php",$text);
             
         }

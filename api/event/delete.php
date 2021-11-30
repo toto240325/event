@@ -47,12 +47,14 @@ if ($direct_call) {
     "id" : ' . $id . '
   }';  
 } else {
-  $input = file_get_contents("php://input");
-  echo "this is a call from apache\n";
-  echo "input: $input";
+  $id = isset($_GET['id']) ? $_GET['id'] : "";
+  
+  $input = '{
+    "id" : ' . $id . '
+  }';
 }
 
-// $result = delete_fct($input, $direct_call);
-// echo json_encode($result);
+$result = delete_fct($input, $direct_call);
+echo json_encode($result);
 
 ?>
