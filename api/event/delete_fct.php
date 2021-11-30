@@ -52,8 +52,8 @@ function delete_fct($input, $direct_call) {
     }
 
     $result = array(
-        'message' => $msg,
-        'error' => $error
+        'error' => $error,
+        'message' => $msg
     );
 
     return $result;

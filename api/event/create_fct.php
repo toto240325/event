@@ -61,9 +61,9 @@ function create_fct($input, $direct_call) {
   }
 
   $result = array(
-    'id' => $lastid,
+    'error' => $error,
     'message' => $msg,
-    'error' => $error
+    'id' => $lastid
   );
 
   return $result;
