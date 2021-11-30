@@ -1,88 +1,49 @@
 <?php 
-  // to debug : 
-  // F5 -> start "listen for Xdebug"
-  // if "address already in use :::9003"
-  // lsof -n -i -P | grep LISTEN
+// to debug : 
+// F5 -> start "listen for Xdebug"
+// if "address already in use :::9003"
+// lsof -n -i -P | grep LISTEN
 
-  // cd /home/toto/event_dev/api/event ; php read_where.php
+// cd ~/event/api/event ; php read_where.php
 
-  // Headers
-  header('Access-Control-Allow-Origin: *');
-  header('Content-Type: application/json');
+// detect is we are in development mode (module are in ~) or production mode (modules are in /var/www/)
+$dir = dirname(__FILE__);
+$dir_arr = explode("/",$dir);
+$dev_mode = ($dir_arr[1] == "home");
+//echo "dev_mode : $dev_mode";
 
-  include_once '../../config/Database.php';
-  include_once '../../models/Event.php';
-  include '../../utilities.php';
-  include '../../params.php';
+if ($dev_mode) {
+  $root_folder = "/home/toto/event";
+} else {
+  $root_folder = "/var/www/event";
+}
 
-  // Instantiate DB & connect
-  $database = new Database($params);
-  $db = $database->connect();
+require_once "$root_folder/api/event/read_where_fct.php";
 
-  // Instantiate event object
-  $event = new Event($db,$database->db_type);
+// detect if we are call from apache or from command line
+$direct_call = ($argc != null);
+if ($direct_call) {
+  // echo "this is a call from command line\n";
+  // echo "There are $argc arguments\n";
+  // for ($i=0; $i < $argc; $i++) {
+  //   echo $argv[$i] . "\n";
+  // }
+  $input = '{
+    "categ" : "test",
+    "nb"  : 2
+  }';
+} else {
+    $categ = isset($_GET['categ']) ? $_GET['categ'] : "";
+    $nb = isset($_GET['nb']) ? $_GET['nb'] : 0;
+    
+    $input = '{
+      "categ" : "' . $categ . '",
+      "nb"  : ' . $nb . '
+    }';
+  
+}
 
-  $debug = false;
-  if ($debug) {
-    $type = isset($_GET['type']) ? $_GET['type'] : $event->type = "temperature"; # die("sorry, no _GET\n");
-    $limit = isset($_GET['limit']) ? $_GET['limit'] : $event->limit = 3; # die("sorry, no _GET\n");  
-  } else {
-    // Get $type
-    $type = isset($_GET['type']) ? $_GET['type'] : "";
+$result = read_where_fct($input, $direct_call);
+echo json_encode($result);
 
-    // Get $limit
-    $limit = isset($_GET['limit']) ? $_GET['limit'] : 0;
-  }
-
-
-  // event query
-  $result = $event->read_where($type,$limit);
-
-  if ($database->db_type == "mysql") {
-    // Get row count
-    $num = $result->rowCount();
-  } elseif ($database->db_type == "sqlite") {
-    // Get row count this works for mysql but doesn't work well for sqlite
-    $item = $result->fetchAll(PDO::FETCH_ASSOC); 
-    if($item && count($item)){ 
-      $num = count($item);
-      //reset the rows pointer to the beginning
-      $result->execute();
-    } else {
-      $num = 0;
-    }
-  } else {
-    die("unknown db_type !");
-  }
-
-  // Check if any events
-  if($num > 0) {
-    // Post array
-    $events_arr = array();
-    // $events_arr['data'] = array();
-
-    while($row = $result->fetch(PDO::FETCH_ASSOC)) {
-      extract($row);
-
-      $event_item = array(
-        'id' => $id,
-        'text' => $text,
-        'host' => $host,
-        'type' => $type,
-        'time' => convert_UTC_to_CET($time)
-      );
-
-      // Push to "data"
-      array_push($events_arr, $event_item);
-      // array_push($events_arr['data'], $event_item);
-    }
-
-    // Turn to JSON & output
-    echo json_encode($events_arr);
-
-  } else {
-    // No event
-    echo json_encode(
-      array('message' => 'No event Found')
-    );
-  }
+?>

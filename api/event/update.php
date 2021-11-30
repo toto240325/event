@@ -23,7 +23,7 @@
 
   $event->text = $data->text;
   $event->host = $data->host;
-  $event->type = $data->type;
+  $event->categ = $data->categ;
   
   // Update event
   if($event->update()) {
