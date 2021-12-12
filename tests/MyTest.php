@@ -16,6 +16,7 @@ if ($dev_mode) {
 }
 
 require_once "$root_folder/api/event/create_fct.php";
+require_once "$root_folder/api/event/read_where_fct.php";
 include "$root_folder/params.php";
 
 //echo "current directory : " . getcwd() . "\n";
@@ -27,7 +28,7 @@ function mylog($text) {
 }
 
 
-function log_event($text,$categ) {
+function direct_call_create_fct($text,$categ) {
     # curl "http://192.168.0.52/event/api/event/read_where.php?categ=temperature&nb=3"
     global $event_server;
 
@@ -45,9 +46,34 @@ function log_event($text,$categ) {
       }';      
     
 
-    $direct_call = ($event_server == "http://localhost/event");
-    
+    //$direct_call is always true with MyTest.php (it cannot be called from apache !)
+    $direct_call = true;
+
     $result = create_fct($input, $direct_call);     
+    return $result;
+}
+
+function direct_call_read_where_fct($categ, $nb) {
+    # curl "http://192.168.0.52/event/api/event/read_where.php?categ=temperature&nb=3"
+    global $event_server;
+
+    // $text = str_replace(' ', '+', $text); // Replaces all spaces with +.
+    // $text = preg_replace('/[^A-Za-z0-9\-+]/', '', $text);
+    // $categ = str_replace(' ', '+', $categ); // Replaces all spaces with +.
+    // $categ = preg_replace('/[^A-Za-z0-9\-]/', '', $categ);
+
+    $host = gethostname();
+
+    $input = '{
+        "categ" : "' . $categ . '",
+        "nb" : "' . $nb . '"
+      }';      
+    
+
+    //$direct_call is always true with MyTest.php (it cannot be called from apache !)
+    $direct_call = true;
+
+    $result = read_where_fct($input, $direct_call);     
     return $result;
 }
 
@@ -144,7 +170,7 @@ class MyTest extends \PHPUnit\Framework\TestCase {
     
         //The data you want to send via POST (as a json string)
         $fields_string = '{
-            "text" : "test from phpunit via apache",
+            "text" : "test from phpunit via the apache API",
             "host" : "test host",
             "categ" : "test"
         }';  
@@ -215,25 +241,22 @@ class MyTest extends \PHPUnit\Framework\TestCase {
     }       
 
 
-
-
-
-
-
-
-    public function testLogEvent() {
+    public function test_direct_call_create_read_event() {
         # curl "http://192.168.0.52/event/api/event/read_where.php?categ=temperature&nb=3"
         global $event_server;
 
 
         // create a dummy test record
-        $result = log_event("test 123456 log from MyTest.php","mynewtype");
+        $output = direct_call_create_fct("test 123456 log from MyTest.php","mynewtype");
         
-        // read the last created event
-        $output = myCurl($event_server . "/api/event/read_where.php?nb=1");
+        // read the event just created
+        $result = direct_call_read_where_fct("mynewtype", 1);
+        
+        // read the last created event, but not via the API because
+        ///$output = myCurl($event_server . "/api/event/read_where.php?nb=1");
         
         // check the event just read corresponds to the event created just before
-        $result = json_decode($output, true);
+        //$result = json_decode($output, true);
         $error = $result["error"];
         $this->assertSame("",$error);
         $events = $result["events"];
@@ -248,7 +271,7 @@ class MyTest extends \PHPUnit\Framework\TestCase {
             $text = $event["text"];
             $host = $event["host"];
             $time = $event["time"];
-            echo "test : $text - time : $time \n";
+            //echo "test : $text - time : $time \n";
             $this->assertSame("test 123456 log from MyTest.php",$text);
             
         }
