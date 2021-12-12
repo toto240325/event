@@ -53,16 +53,16 @@ function create_fct($input, $direct_call) {
     //given that for the events table id is the "integer primary key", rowid = id
     // more : https://www.sqlite.org/rowidtable.html
 
-    $msg = "event $lastid created on $dt_string ($event->text)";
+    $message = "event $lastid created on $dt_string ($event->text)";
     $error = "";
   } else {
-    $msg = 'event not created on '. $dt_string;
+    $message = 'event not created on '. $dt_string;
     $error = 'event not created on '. $dt_string;
   }
 
   $result = array(
     'error' => $error,
-    'message' => $msg,
+    'message' => $message,
     'id' => $lastid
   );
 

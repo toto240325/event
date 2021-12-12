@@ -66,6 +66,26 @@
       return $stmt;
     }
 
+    public function read_ps4($from) {
+      // return the nb of ps4 events, group per date, since $from
+      // Create query
+      $query = 
+      // 'SELECT date(time), count(*)'
+      'SELECT date(time) d, count(*) c'
+        . ' FROM events e'
+        . ' WHERE e.categ = "ps4" and e.time >= "' . $from . '"'
+        . ' group by date(time) '
+        ;
+      
+      // Prepare statement
+      $stmt = $this->conn->prepare($query);
+
+      // Execute query
+      $stmt->execute();
+
+      return $stmt;
+    }
+
 //     // Get Single event
 //     public function read_dummy() {
 //       // Create query

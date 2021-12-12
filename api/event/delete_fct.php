@@ -47,16 +47,16 @@ function delete_fct($input, $direct_call) {
 
     // Delete event
     if($event->delete()) {
-        $msg = "event deleted : $event->id";
+        $message = "event deleted : $event->id";
         $error = '';
     } else {
-        $msg = "event not deleted : $event->id";
+        $message = "event not deleted : $event->id";
         $error = 'error event not deleted';
     }
 
     $result = array(
         'error' => $error,
-        'message' => $msg
+        'message' => $message
     );
 
     return $result;
