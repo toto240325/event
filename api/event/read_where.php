@@ -35,7 +35,7 @@ if ($direct_call) {
   // }
   $input = '{
     "categ" : "test",
-    "nb"  : 25,
+    "nb"  : "25",
     "date_from" : "2021-12-18"
   }';
 } else {
@@ -43,17 +43,17 @@ if ($direct_call) {
     $nb_str = isset($_GET['nb']) ? $_GET['nb'] : "0";
     $date_from = isset($_GET['date_from']) ? $_GET['date_from'] : "1900-01-01";
     
-    //convert nb to integer
-    try {
-      $nb = intval($nb_str);
-    } 
-    catch (UnexpectedValueException $uve) {
-      die("not correct type passed in URL $nb_str; expected : integer" . PHP_EOL);
-    }
+    // //convert nb to integer
+    // try {
+    //   $nb = intval($nb_str);
+    // } 
+    // catch (UnexpectedValueException $uve) {
+    //   die("not correct type passed in URL $nb_str; expected : integer" . PHP_EOL);
+    // }
 
     $input = '{
       "categ" : "' . $categ . '",
-      "nb"  : ' . $nb . ',
+      "nb"  : "' . $nb_str . '",
       "date_from" : "' . $date_from . '"
     }';
   
