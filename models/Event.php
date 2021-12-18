@@ -50,13 +50,12 @@
 
       // Create query
       $query = 'SELECT e.id, e.text, e.host, e.categ, e.time ' .
-        'FROM ' . $this->table . ' e ' .
-        ($categ == '' ? '' : 'WHERE e.categ = "' . $categ . '"') .
-        
-        
-        'ORDER BY ' .
-        '  e.time DESC, e.id DESC ' .
-        ($nb == 0 ? '' : 'LIMIT "' . $nb . '"')
+        ' FROM ' . $this->table . ' e ' .
+        ' WHERE 1=1 ' .
+        ($categ == '' ? '' : ' and e.categ = "' . $categ . '" ') .
+        ($date_from == '' ? '' : ' and e.time >= "' . $date_from . '" ') .
+        ' ORDER BY ' . 'e.time DESC, e.id DESC ' .
+        ($nb == 0 ? '' : ' LIMIT ' . $nb )
         ;
       
       // Prepare statement

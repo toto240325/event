@@ -54,7 +54,7 @@ function direct_call_create_fct($text,$categ) {
     return $result;
 }
 
-function direct_call_read_where_fct($categ, $nb, $date_from) {
+function direct_call_read_where_fct($categ, $nb_str, $date_from) {
     # curl "http://192.168.0.52/event/api/event/read_where.php?categ=temperature&nb=3"
     global $event_server;
 
@@ -67,7 +67,7 @@ function direct_call_read_where_fct($categ, $nb, $date_from) {
 
     $input = '{
         "categ" : "' . $categ . '",
-        "nb" : "' . $nb . '",
+        "nb" : "' . $nb_str . '",
         "date_from" : "' . $date_from . '"
       }';      
     
@@ -275,7 +275,7 @@ class MyTest extends \PHPUnit\Framework\TestCase {
         $output = direct_call_create_fct("test 123456 log from MyTest.php","mynewtype");
         
         // read the event just created
-        $result = direct_call_read_where_fct("mynewtype", 1,"1900-01-01");
+        $result = direct_call_read_where_fct("mynewtype", "1","1900-01-01");
         
         // read the last created event, but not via the API because
         ///$output = myCurl($event_server . "/api/event/read_where.php?nb=1");

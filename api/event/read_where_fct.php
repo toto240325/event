@@ -1,5 +1,12 @@
 <?php 
 
+function check_type($var,$type) {
+    $this_type = gettype($var);
+    if ($this_type != $type) {
+        die("not correct type for $var; expected : $type; found : $this_type\n");
+    }
+}
+
 function read_where_fct($input, $direct_call) {
 
     // detect is we are in development mode (module are in ~) or production mode (modules are in /var/www/)
@@ -37,26 +44,18 @@ function read_where_fct($input, $direct_call) {
     // echo "data : ";
     // var_dump($data);
 
-
-
     $categ = $data->categ;
-    $nb = $data->nb;
+    $nb_str = $data->nb;
     $date_from = $data->date_from;
 
     //check parameters have the right
-    if (gettype($categ) != "string") {
-        die("not correct type");
-    }
-    if (gettype($nb) != "integer") {
-        die("not correct type");
-    }
-    if (gettype($date_from) != "string") {
-        die("not correct type");
-    }
+    check_type($categ,"string");
+    check_type($nb_str,"string");
+    check_type($date_from, "string");
 
 
     // event query
-    $result = $event->read_where($categ, $nb, $date_from);
+    $result = $event->read_where($categ, $nb_str, $date_from);
 
     if ($database->db_type == "mysql") {
         // Get row count
