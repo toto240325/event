@@ -43,8 +43,8 @@ if ($direct_call) {
     $nb_str = isset($_GET['nb']) ? $_GET['nb'] : "0";
     $date_from = isset($_GET['from']) ? $_GET['from'] : "1900-01-01";
     
-    echo $date_from;
-    return;
+    // echo $date_from;
+    // return;
 
     // //convert nb to integer
     // try {
