@@ -38,12 +38,12 @@ function read_where_fct($input, $direct_call) {
     // var_dump($data);
 
 
-    // Set ID to update
     $categ = $data->categ;
     $nb = $data->nb;
+    $date_from = $data->date_from;
 
     // event query
-    $result = $event->read_where($categ,$nb);
+    $result = $event->read_where($categ, $nb, $date_from);
 
     if ($database->db_type == "mysql") {
         // Get row count

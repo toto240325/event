@@ -45,13 +45,15 @@
       return $stmt;
     }
 
-    public function read_where($categ,$nb) {
-      // read the last $nb events (sorted chronologically) of categ $categ (if provided)
+    public function read_where($categ,$nb,$date_from) {
+      // read at most $nb events (sorted chronologically) of categ $categ (if provided) and/or after $date_from is provided
 
       // Create query
       $query = 'SELECT e.id, e.text, e.host, e.categ, e.time ' .
         'FROM ' . $this->table . ' e ' .
         ($categ == '' ? '' : 'WHERE e.categ = "' . $categ . '"') .
+        
+        
         'ORDER BY ' .
         '  e.time DESC, e.id DESC ' .
         ($nb == 0 ? '' : 'LIMIT "' . $nb . '"')

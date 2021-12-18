@@ -72,7 +72,7 @@ function read_ps4_fct($input, $direct_call) {
 
             $rec_item = array(
                 'date' => convert_UTC_to_CET($row["d"]),
-                'count' => $c
+                'count' => intval($c)
             );
 
             // Push to "data"
