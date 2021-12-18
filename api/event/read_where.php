@@ -34,15 +34,18 @@ if ($direct_call) {
   //   echo $argv[$i] . "\n";
   // }
   $input = '{
-    "categ" : "test",
-    "nb"  : "25",
-    "date_from" : "2021-12-18"
+    "categ" : "ps4",
+    "nb"  : "1000",
+    "date_from" : "2021-12-10"
   }';
 } else {
     $categ = isset($_GET['categ']) ? $_GET['categ'] : "";
     $nb_str = isset($_GET['nb']) ? $_GET['nb'] : "0";
-    $date_from = isset($_GET['date_from']) ? $_GET['date_from'] : "1900-01-01";
+    $date_from = isset($_GET['from']) ? $_GET['from'] : "1900-01-01";
     
+    echo $date_from;
+    return;
+
     // //convert nb to integer
     // try {
     //   $nb = intval($nb_str);
