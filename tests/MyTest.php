@@ -17,6 +17,7 @@ if ($dev_mode) {
 
 require_once "$root_folder/api/event/create_fct.php";
 require_once "$root_folder/api/event/read_where_fct.php";
+require_once "$root_folder/api/event/read_ps4_fct.php";
 include "$root_folder/params.php";
 
 //echo "current directory : " . getcwd() . "\n";
@@ -53,7 +54,7 @@ function direct_call_create_fct($text,$categ) {
     return $result;
 }
 
-function direct_call_read_where_fct($categ, $nb) {
+function direct_call_read_where_fct($categ, $nb, $date_from) {
     # curl "http://192.168.0.52/event/api/event/read_where.php?categ=temperature&nb=3"
     global $event_server;
 
@@ -66,7 +67,8 @@ function direct_call_read_where_fct($categ, $nb) {
 
     $input = '{
         "categ" : "' . $categ . '",
-        "nb" : "' . $nb . '"
+        "nb" : "' . $nb . '",
+        "date_from" : "' . $date_from . '"
       }';      
     
 
@@ -74,6 +76,29 @@ function direct_call_read_where_fct($categ, $nb) {
     $direct_call = true;
 
     $result = read_where_fct($input, $direct_call);     
+    return $result;
+}
+
+function direct_call_read_ps4_fct($date_from) {
+    # curl "http://192.168.0.52/event/api/event/read_where.php?categ=temperature&nb=3"
+    global $event_server;
+
+    // $text = str_replace(' ', '+', $text); // Replaces all spaces with +.
+    // $text = preg_replace('/[^A-Za-z0-9\-+]/', '', $text);
+    // $categ = str_replace(' ', '+', $categ); // Replaces all spaces with +.
+    // $categ = preg_replace('/[^A-Za-z0-9\-]/', '', $categ);
+
+    $host = gethostname();
+
+    $input = '{
+        "from" : "' . $date_from . '"
+      }';      
+    
+
+    //$direct_call is always true with MyTest.php (it cannot be called from apache !)
+    $direct_call = true;
+
+    $result = read_ps4_fct($input, $direct_call);     
     return $result;
 }
 
@@ -250,7 +275,7 @@ class MyTest extends \PHPUnit\Framework\TestCase {
         $output = direct_call_create_fct("test 123456 log from MyTest.php","mynewtype");
         
         // read the event just created
-        $result = direct_call_read_where_fct("mynewtype", 1);
+        $result = direct_call_read_where_fct("mynewtype", 1,"1900-01-01");
         
         // read the last created event, but not via the API because
         ///$output = myCurl($event_server . "/api/event/read_where.php?nb=1");
@@ -276,4 +301,50 @@ class MyTest extends \PHPUnit\Framework\TestCase {
             
         }
     }
+
+    public function test_direct_call_create_and_read_ps4() {
+        # curl "http://192.168.0.52/event/api/event/read_where.php?categ=temperature&nb=3"
+        global $event_server;
+
+
+        // create a dummy test record
+        $output = direct_call_create_fct("ps4 is up 123456 from MyTest.php","ps4");
+        
+        // read the ps4 events group by date since today; there should  event just be at least one
+
+        $today_str = _date("Y-m-d", false, 'Europe/Paris');
+        //$now_str = _date("Y-m-d H:i:s", false, 'Europe/Paris');
+
+        $result = direct_call_read_ps4_fct($today_str);
+        
+        // read the last created event, but not via the API because
+        ///$output = myCurl($event_server . "/api/event/read_where.php?nb=1");
+        
+        // check the event just read corresponds to the event created just before
+        //$result = json_decode($output, true);
+        $error = $result["error"];
+        $this->assertSame("",$error);
+        $records = $result["records"];
+        $num = count($records);
+        //echo "number of records found: " . $num;
+        $this->assertGreaterThanOrEqual(1,$num);
+        if ($num > 0) {
+            $record = $records[0];
+            // echo "rec : \n";
+            // var_dump($rec);
+            // echo "\n";
+              
+            $datetime = $record["date"];
+            // remove time part
+            $date = new datetime($datetime);
+            $date_str = $date->format('Y-m-d');
+
+            $count = $record["count"];
+            //echo "date : $date - count : $count \n";
+            $this->assertSame($today_str,$date_str);
+            
+        }
+    }
+
+
 }
