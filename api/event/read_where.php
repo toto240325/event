@@ -3,14 +3,19 @@
 // F5 -> start "listen for Xdebug"
 // if "address already in use :::9003"
 // lsof -n -i -P | grep LISTEN
-
+// to test locally : 
 // cd ~/event/api/event ; php read_where.php
+//
+// to test the API : 
+// http://192.168.0.52/event/api/event/read_where.php?categ=temperature&nb=60&date_from=2021-12-01
+// http://192.168.0.73/event/api/event/read_where.php?categ=temperature&nb=60&date_from=2021-12-01
 
 // detect is we are in development mode (module are in ~) or production mode (modules are in /var/www/)
 $dir = dirname(__FILE__);
 $dir_arr = explode("/",$dir);
 $dev_mode = ($dir_arr[1] == "home");
-//echo "dev_mode : $dev_mode";
+// echo "dev_mode : $dev_mode";
+// return;
 
 if ($dev_mode) {
   $root_folder = "/home/toto/event";
@@ -41,7 +46,7 @@ if ($direct_call) {
     $input = '{
       "categ" : "' . $categ . '",
       "nb"  : ' . $nb . ',
-      "date_from"  : ' . $date_from . '
+      "date_from" : "' . $date_from . '"
     }';
   
 }

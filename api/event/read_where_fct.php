@@ -38,9 +38,22 @@ function read_where_fct($input, $direct_call) {
     // var_dump($data);
 
 
+
     $categ = $data->categ;
     $nb = $data->nb;
     $date_from = $data->date_from;
+
+    //check parameters have the right
+    if (gettype($categ) != "string") {
+        die("not correct type");
+    }
+    if (gettype($nb) != "integer") {
+        die("not correct type");
+    }
+    if (gettype($date_from) != "string") {
+        die("not correct type");
+    }
+
 
     // event query
     $result = $event->read_where($categ, $nb, $date_from);
