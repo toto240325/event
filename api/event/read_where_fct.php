@@ -7,6 +7,30 @@ function check_type($var,$type) {
     }
 }
 
+function check_date_between($date_str, $date_from_str, $date_to_str) {
+    try {
+        $date_dt = strtotime($date_str);
+        $date_from_dt = strtotime($date_from_str);
+        $date_to_dt = strtotime($date_to_str);
+
+        // $date_dt = new DateTime($date_str, new DateTimeZone('Europe/Paris'));
+        // $date_from_dt = new DateTime($date_from_str, new DateTimeZone('Europe/Paris'));
+        // $date_to_dt = new DateTime($date_to_str, new DateTimeZone('Europe/Paris'));
+      } catch(Exception $e) {
+        // this should never occur as the last rowid is supposed to be a int anyway
+        $msg = $e->getMessage();
+        die("exception when converting dates in check_date_between; error : $msg" . PHP_EOL);
+        //throw new Exception("exception  when converting dates in check_date_between; error : $msg");
+      }
+      $result_OK = (($date_dt >= $date_from_dt) and ($date_dt <= $date_to_dt));
+    //   $result2_OK = ($date_dt <= $date_to_dt);
+    //   $result_OK = ($result1_OK and $result2_OK);
+      if (!$result_OK) {
+        die("$date_str should be between $date_from_str and $date_to_str" . PHP_EOL);
+    }
+}
+
+
 function read_where_fct($input, $direct_call) {
 
     // detect is we are in development mode (module are in ~) or production mode (modules are in /var/www/)
@@ -53,6 +77,7 @@ function read_where_fct($input, $direct_call) {
     check_type($nb_str,"string");
     check_type($date_from, "string");
 
+    check_date_between($date_from,"1900-01-01","2022-12-31");
 
     // event query
     $result = $event->read_where($categ, $nb_str, $date_from);

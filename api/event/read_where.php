@@ -35,8 +35,8 @@ if ($direct_call) {
   // }
   $input = '{
     "categ" : "ps4",
-    "nb"  : "1000",
-    "date_from" : "2021-12-10"
+    "nb"  : "2",
+    "date_from" : "2021-12-01"
   }';
 } else {
     $categ = isset($_GET['categ']) ? $_GET['categ'] : "";
@@ -51,7 +51,8 @@ if ($direct_call) {
     //   $nb = intval($nb_str);
     // } 
     // catch (UnexpectedValueException $uve) {
-    //   die("not correct type passed in URL $nb_str; expected : integer" . PHP_EOL);
+    //    $msg = $uve->getMessage();
+    //    die("not correct type passed in URL $nb_str; expected : integer; error : $msg" . PHP_EOL);
     // }
 
     $input = '{
