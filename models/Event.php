@@ -270,7 +270,7 @@
       $stmt = $this->conn->prepare($query);
 
       // Clean data
-      $this->categ = htmlspecialchars(strip_tags($this->text));
+      $this->text = htmlspecialchars(strip_tags($this->text));
       $this->host = htmlspecialchars(strip_tags($this->host));
       $this->categ = htmlspecialchars(strip_tags($this->categ));
 

@@ -22,7 +22,8 @@ if ($dev_mode) {
 require_once "$root_folder/api/event/create_fct.php";
 
 // detect if we are call from apache or from command line
-$direct_call = ($argc != null);
+// $direct_call = ($argc != null);
+$direct_call = isset($argc);
 
 
 if ($direct_call) {
