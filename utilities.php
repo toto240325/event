@@ -15,7 +15,8 @@ function _date($format = "r", $timestamp = false, $timezone = false)
 
 function convert_UTC_to_CET($time_str) {
   $src_dt_str = $time_str;
-  $src_tz =  new DateTimeZone('Europe/London');
+  // $src_tz =  new DateTimeZone('Europe/London');
+  $src_tz =  new DateTimeZone('UTC');
   $dest_tz = new DateTimeZone('Europe/Paris');
   $dt = new DateTime($src_dt_str, $src_tz);
   $dt->setTimeZone($dest_tz);

@@ -8,11 +8,22 @@ function create_fct($input, $direct_call) {
   $dev_mode = ($dir_arr[1] == "home");
   //echo "dev_mode : $dev_mode";
 
+  // echo "input: "; var_dump($input);
+  // die("test98 <br> 
+  //       dev_mode : $dev_mode <br> 
+  //       direct_call : $direct_call <br> input = $input <br> end");
+
   if ($dev_mode) {
     $root_folder = "/home/toto/event";
   } else {
     $root_folder = "/var/www/event";
   }
+
+//   die("
+// test97 <br> 
+// root_folder : $root_folder <br> 
+// end
+// ");
 
   include_once "$root_folder/config/Database.php";
   include_once "$root_folder/models/Event.php";
@@ -32,12 +43,17 @@ function create_fct($input, $direct_call) {
   // $version = $database->querySingle('SELECT SQLITE_VERSION()');
   $db = $database->connect();
 
+  // echo "Sqlite DB : $database->sqlite_db <br>\n"; 
+
   // Instantiate blog event object
   $event = new Event($db,$database->db_type);
   
-  //echo "input : " . $input . "\n";
+  // echo "input : " . $input . "\n";
   $data = json_decode($input);
-  
+  // echo "data : \n";
+  // var_dump($data);
+
+
   $event->text = $data->text;
   $event->categ = $data->categ;
   $event->host = $data->host;
@@ -46,14 +62,19 @@ function create_fct($input, $direct_call) {
   $dt = new DateTime("now", new DateTimeZone('Europe/Paris'));
   $dt_string = $dt->format('Y/m/d H:i:s');
   
+  // echo("dt_string : $dt_string<br>\n");
+
   $lastid = $event->create();
+
+  // echo("last_id : $last_id");
+
   if($lastid > 0 ) {
 
     //row creation was successful; get id of the row just created
     //given that for the events table id is the "integer primary key", rowid = id
     // more : https://www.sqlite.org/rowidtable.html
 
-    $message = "event $lastid created on $dt_string ($event->text)";
+    $message = "event $lastid created on $dt_string ($event->categ) ($event->text)";
     $error = "";
   } else {
     $message = 'event not created on '. $dt_string;

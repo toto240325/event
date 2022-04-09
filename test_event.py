@@ -17,9 +17,11 @@ class TestLogEvent(unittest.TestCase):
 
     def test_create_event(self):
         result = create_event("text","categ")
+        print("result : ", result)
         # result = json.loads(result_json)
         message = result['message']
         trimmed_result=message[:6]
+        print("message : ", message)
         self.assertEqual(trimmed_result, "event xxx created on..."[:6])
 
    
@@ -33,4 +35,5 @@ class TestLogEvent(unittest.TestCase):
     
 
 if __name__ == '__main__':
+    # print("start !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!")
     unittest.main()

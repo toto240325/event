@@ -1,7 +1,16 @@
 <?php
-// two ways to execute the test suite : 
-// cd ~/event ; php vendor/bin/phpunit tests/MyTest.php --stderr --testdox # --stderr to avoid errors to interfere ??? --testdox : better output ?
-// ./vendor/bin/phpunit --testdox
+// to test : 
+//    F5 -> start "listen for Xdebug"
+//    set breakpoint
+//    cd ~/event ; php vendor/bin/phpunit tests/MyTest.php --stderr --testdox # --stderr to avoid errors to interfere ??? --testdox : better output ?
+// if "address already in use :::9003"
+// lsof -n -i -P | grep LISTEN
+//
+// in case of problems, don't hesitate to check THE LOGS !!
+// sudo tail -f /var/log/apache2/error.log
+// sudo tail -f /var/log/apache2/access.log
+
+
 
 // detect is we are in development mode (module are in ~) or production mode (modules are in /var/www/)
 $dir = dirname(__FILE__);
@@ -179,7 +188,8 @@ class MyTest extends \PHPUnit\Framework\TestCase {
 
  
     public function testEventAPICreate() {
-        // curl -X POST -d "{\"text\" : \"test from phpunit\",\"host\" : \"test host\",\"categ\" : \"sqlite test\"}"  event_server + "/api/event/create.php"    
+        // curl -X POST -d "{\"text\" : \"test from phpunit\",\"host\" : \"test host\",\"categ\" : \"sqlite test\"}"  event_server + "/event/api/event/create.php"    
+        // curl -X POST -d "{\"text\" : \"test from phpunit\",\"host\" : \"test host\",\"categ\" : \"sqlite test\"}"  "http://localhost/event/api/event/create.php"    
         global $event_server;
         $url = $event_server . "/api/event/create.php";
 
@@ -258,7 +268,7 @@ class MyTest extends \PHPUnit\Framework\TestCase {
     public function testEventAPIReadWhere() {
         # curl "http://192.168.0.52/event/api/event/read_where.php?categ=temperature&nb=3"
         global $event_server;
-        $output = myCurl($event_server . "/api/event/read_where.php?categ=temperature&nb=2");
+        $output = myCurl($event_server . "/api/event/read_where.php?categ=temperature&nb=3");
         $result = json_decode($output, true);
         $num = count($result);
         //echo "number of records found: " . $num;

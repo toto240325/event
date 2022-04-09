@@ -34,7 +34,7 @@
       $query = 'SELECT e.id, e.text, e.host, e.categ, e.time
         FROM ' . $this->table . ' e
         ORDER BY
-          e.time DESC';
+          e.id DESC';
       
       // Prepare statement
       $stmt = $this->conn->prepare($query);
@@ -54,10 +54,13 @@
         ' WHERE 1=1 ' .
         ($categ == '' ? '' : ' and e.categ = "' . $categ . '" ') .
         ($date_from == '' ? '' : ' and e.time >= "' . $date_from . '" ') .
-        ' ORDER BY ' . 'e.time DESC, e.id DESC ' .
+        ' ORDER BY ' . 'e.id DESC ' .
         ($nb == 0 ? '' : ' LIMIT ' . $nb )
         ;
+      //echo($query);
+      //' ORDER BY ' . 'e.id DESC ' .
       
+
       // Prepare statement
       $stmt = $this->conn->prepare($query);
 
@@ -257,11 +260,17 @@
       //$query = 'INSERT INTO ' . $this->table . ' SET text = :text, host = :host, categ = :categ';
       $query = 'INSERT INTO ' . $this->table . ' (text, host, categ) values (:text, :host, :categ)';
 
+      // echo "inside create !!! <br>\n";
+      // echo "query : $query <br>\n";
+      // echo "text : $this->text <br>\n";
+      // echo "host : $this->host <br>\n";
+      // echo "categ : $this->categ <br>\n";
+      
       // Prepare statement
       $stmt = $this->conn->prepare($query);
 
       // Clean data
-      $this->text = htmlspecialchars(strip_tags($this->text));
+      $this->categ = htmlspecialchars(strip_tags($this->text));
       $this->host = htmlspecialchars(strip_tags($this->host));
       $this->categ = htmlspecialchars(strip_tags($this->categ));
 
@@ -270,6 +279,10 @@
       $stmt->bindParam(':host', $this->host);
       $stmt->bindParam(':categ', $this->categ);
       // Execute query
+
+      // echo "stmt : <br>\n";
+      // var_dump($stmt);
+
       if($stmt->execute()) {   
         try {
 
